@@ -1,91 +1,156 @@
 "use client";
-import { useState,useEffect } from "react";
+
+import { useState, useEffect } from "react";
 import SectionHeader from "@/components/ui/SectionHeader";
-import WrapperCard from "@/components/ui/WrapperCard";
 import { faqs } from "@/data/Faqs";
 
+/* 🔥 STABLE + INDEX SAFE */
+function getRelatedFaqs(faqs, activeIndex, count) {
+  const mapped = faqs.map((faq, index) => ({ ...faq, index }));
+
+  const ordered = [
+    ...mapped.slice(activeIndex + 1),
+    ...mapped.slice(0, activeIndex),
+  ];
+
+  return ordered.slice(0, count);
+}
+
 export default function FAQ() {
+  const [active, setActive] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const [visibleFaqs, setVisibleFaqs] = useState([]);
-  const [activeIndex, setActiveIndex] = useState(null);
-
-  const ITEMS_TO_SHOW = 5;
-
+  /* ================= RESPONSIVE ================= */
   useEffect(() => {
-    const shuffled = [...faqs].sort(() => 0.5 - Math.random());
-    setVisibleFaqs(shuffled.slice(0, ITEMS_TO_SHOW));
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
-  const toggleFAQ = (index) => {
-    setActiveIndex(activeIndex === index ? null : index);
+  const previewFaqs = getRelatedFaqs(
+    faqs,
+    active,
+    isMobile ? 1 : 3
+  );
+
+  const next = () => {
+    setActive((prev) =>
+      prev < faqs.length - 1 ? prev + 1 : prev
+    );
+  };
+
+  const prev = () => {
+    setActive((prev) =>
+      prev > 0 ? prev - 1 : prev
+    );
   };
 
   return (
-    <section className="w-full py-20 bg-(--bg-main) flex flex-col items-center justify-center">
+    <section className="relative py-24 md:py-32">
+      {/* BACKGROUND DEPTH */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(40,108,181,0.03),transparent)]" />
+      </div>
 
-      <SectionHeader label={"Got Questions?"} title={"We've got answers"}/>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center relative z-10">
+        {/* HEADER */}
+        <div className="mb-16">
+          <SectionHeader
+            label="Got Questions?"
+            title={["We've got", "answers"]}
+          />
+        </div>
 
-      <WrapperCard>
-        <div className="max-w-5xl mx-auto px-2">
+        {/* MAIN */}
+        <div className="max-w-3xl mx-auto">
+          {/* MAIN CARD */}
+          <div
+            className="
+              relative
+              rounded-2xl p-6 md:p-10
+              border border-[var(--glass-border)]
+              bg-[var(--glass-bg)]
+              backdrop-blur-xl
+              shadow-[var(--shadow-soft)]
+              overflow-hidden
+            "
+          >
+            {/* GRADIENT DEPTH */}
+            <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(40,108,181,0.05),transparent)] pointer-events-none" />
 
-          <div className="space-y-3 sm:space-y-4 ">
-            {visibleFaqs.map((faq, index) => (
-              <div
-                key={index}
-                className="bg-(--bg-main) rounded-2xl border border-(--border-color) overflow-hidden transition-all duration-300"
-              >
+            <div className="relative z-10">
+              <h3 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">
+                {faqs[active].question}
+              </h3>
 
-                {/* Question */}
-                <button
-                  onClick={() => toggleFAQ(index)}
-                  className="w-full flex justify-between items-center py-4 px-6 sm:p-6 text-left"
-                >
-                  <div className="flex">
-
-                    <div className="text-(--text-muted) font-medium text-sm mt-1 pr-4">
-                      {String(index + 1).padStart(2, "0")+"."}
-                    </div>
-
-                    <span className="text-md sm:text-lg font-medium text-(--text-primary)">
-                      {faq.question}
-                    </span>
-
-                  </div>
-
-                  <span
-                    className={`text-xl sm:text-2xl text-(--text-primary) transition-transform duration-300 ${
-                      activeIndex === index ? "rotate-45" : ""
-                    }`}
-                  >
-                    +
-                  </span>
-
-                </button>
-
-                {/* Answer */}
-                <div
-                  className={`grid transition-all duration-300 ease-in-out ${
-                    activeIndex === index
-                      ? "grid-rows-[1fr] opacity-100 p-6 pt-0"
-                      : "grid-rows-[0fr] opacity-0"
-                  }`}
-                >
-                  <div className="overflow-hidden bg-(--bg-main)">
-
-                    <p className="text-(--text-secondary) text-sm sm:text-lg leading-relaxed">
-                      {faq.answer}
-                    </p>
-
-                  </div>
-                </div>
-
-              </div>
-            ))}
+              <p className="mt-4 text-[var(--text-secondary)] leading-relaxed">
+                {faqs[active].answer}
+              </p>
+            </div>
           </div>
 
-        </div>
-      </WrapperCard>
+          {/* CONTROLS */}
+          <div className="flex justify-center gap-4 mt-8">
+            <button
+              onClick={prev}
+              disabled={active === 0}
+              className="
+                w-11 h-11 flex items-center justify-center rounded-full
+                border border-[var(--glass-border)]
+                bg-[var(--glass-bg)]
+                backdrop-blur-md
+                hover:shadow-[var(--shadow-soft)]
+                transition-all duration-300
+                disabled:opacity-30
+              "
+            >
+              ←
+            </button>
 
+            <button
+              onClick={next}
+              disabled={active === faqs.length - 1}
+              className="
+                w-11 h-11 flex items-center justify-center rounded-full
+                border border-[var(--glass-border)]
+                bg-[var(--glass-bg)]
+                backdrop-blur-md
+                hover:shadow-[var(--shadow-soft)]
+                transition-all duration-300
+                disabled:opacity-30
+              "
+            >
+              →
+            </button>
+          </div>
+
+          {/* SUGGESTIONS */}
+          <div className="flex justify-center gap-3 mt-8 overflow-x-auto no-scrollbar px-1">
+            {previewFaqs.map((faq) => (
+              <button
+                key={faq.id}
+                onClick={() => setActive(faq.index)}
+                className="
+                  text-sm px-4 py-2 rounded-full whitespace-nowrap
+                  border border-[var(--glass-border)]
+                  bg-[var(--glass-bg)]
+                  backdrop-blur-md
+                  text-[var(--text-secondary)]
+                  transition-all duration-300
+                  hover:text-[var(--color-blue)]
+                  hover:border-[var(--color-blue)]
+                  hover:shadow-[var(--shadow-soft)]
+                "
+              >
+                {faq.question.length > 42
+                  ? faq.question.slice(0, 42) + "..."
+                  : faq.question}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

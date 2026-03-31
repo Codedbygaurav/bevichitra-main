@@ -1,27 +1,68 @@
-export default function ServiceCardItem({ services }) {
+export default function ServiceCardItem({ service }) {
   return (
     <div
-      className="rounded-3xl bg-(--bg-main) px-4 py-6 border border-(--border-color) shadow-[inset_0_1px_4px_rgba(0,0,0,0.05),0_20px_60px_-20px_rgba(0,0,0,0.08)]"
+      className="
+        group relative
+        rounded-2xl p-6 md:p-8 mb-5
+        transition-all duration-300
+        border border-[var(--glass-border)]
+        bg-[var(--glass-bg)]
+        backdrop-blur-xl
+        hover:-translate-y-1
+        hover:shadow-[var(--shadow-hover)]
+        overflow-hidden
+      "
     >
-      <div className="flex justify-between items-center border-b border-(--border-color) pb-3 mb-2">
-        <h2 className="text-xl font-semibold text-(--text-primary)">
-          {services.title}
-        </h2>
+      {/* TOP */}
+      <div className="flex justify-between items-start gap-4">
+        {/* TITLE */}
+        <h3
+          className="
+            text-xl md:text-2xl font-semibold
+            text-[var(--text-primary)]
+            transition-colors duration-300
+            group-hover:text-[var(--color-blue)]
+          "
+        >
+          {service.title}
+        </h3>
 
-        <div className="bg-(--bg-tertiary) h-8 w-8 rounded-lg"></div>
+        {/* ICON BOX */}
+        <div
+          className="
+            w-11 h-11 flex items-center justify-center rounded-xl
+            border border-[var(--glass-border)]
+            bg-[var(--bg-secondary)]
+            transition-all duration-300
+            group-hover:scale-105
+            group-hover:shadow-[var(--shadow-soft)]
+          "
+        >
+          {service.icon ? service.icon : "✨"}
+        </div>
       </div>
 
-      <p className="text-(--text-secondary)">
-        {services.description}
+      {/* DESC */}
+      <p className="mt-4 text-[var(--text-secondary)] leading-relaxed">
+        {service.description}
       </p>
 
-      <div className="flex justify-between mt-4 ">
-        {services.tags.map((subItem, i) => (
+      {/* TAGS */}
+      <div className="flex flex-wrap gap-2 mt-5">
+        {service.tags.map((tag, i) => (
           <span
-            className="bg-(--bg-tertiary) text-(--text-primary) px-2 py-1 rounded-full text-sm"
-            key={`${services.id}-${i}`}
+            key={i}
+            className="
+              text-xs px-3 py-1 rounded-full
+              bg-[var(--bg-secondary)]
+              text-[var(--text-secondary)]
+              border border-[var(--border)]
+              transition-all duration-300
+              hover:text-[var(--color-blue)]
+              hover:border-[var(--color-blue)]
+            "
           >
-            {subItem}
+            {tag}
           </span>
         ))}
       </div>

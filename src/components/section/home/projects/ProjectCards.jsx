@@ -1,236 +1,140 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
-import { motion, useInView } from "framer-motion";
+
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { projects } from "@/data/projects";
-import WrapperCard from "@/components/ui/WrapperCard";
+import Image from "next/image";
 import Button from "@/components/ui/Button";
 
 export default function ProjectCards() {
-
-  const total = projects.length;
   const [index, setIndex] = useState(0);
-  const [autoPlay, setAutoPlay] = useState(true);
 
-  const ref = useRef(null);
-  const isInView = useInView(ref, { amount: 0.4 });
+  const next = () => {
+    if (index < projects.length - 1) {
+      setIndex(index + 1);
+    }
+  };
 
-  /* ================= NAV LOGIC ================= */
-
-  const nextManual = () => setIndex((prev) => Math.min(prev + 1, total - 1));
-  const prevManual = () => setIndex((prev) => Math.max(prev - 1, 0));
-
-  /* ================= AUTOPLAY ================= */
-
-  useEffect(() => {
-    const isMobile =
-      typeof window !== "undefined" && window.innerWidth < 1024;
-
-    if (!autoPlay || !isInView || isMobile) return;
-
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % total);
-    }, 4500);
-
-    return () => clearInterval(interval);
-  }, [autoPlay, isInView, total]);
-
-  /* ================= VARIANTS ================= */
-
-  const variants = {
-    center: {
-      x: "0%",
-      scale: 1,
-      opacity: 1,
-      zIndex: 20,
-      rotateY: 0,
-    },
-
-    left: {
-      x: "-35%",
-      scale: 0.9,
-      opacity: 0.6,
-      zIndex: 10,
-      rotateY: 10,
-    },
-
-    right: {
-      x: "35%",
-      scale: 0.9,
-      opacity: 0.6,
-      zIndex: 10,
-      rotateY: -10,
-    },
-
-    hidden: {
-      scale: 0.7,
-      opacity: 0,
-      zIndex: 0,
-    },
+  const prev = () => {
+    if (index > 0) {
+      setIndex(index - 1);
+    }
   };
 
   return (
-    <WrapperCard ref={ref}>
-      {/* ================= DESKTOP ================= */}
-
-      <div className="hidden lg:block">
-        <div className="relative h-[520px] flex items-center justify-center perspective-[1200px]">
-
-          {projects.map((project, i) => {
-
-            const pos =
-              i === index
-                ? "center"
-                : i === (index - 1 + total) % total
-                ? "left"
-                : i === (index + 1) % total
-                ? "right"
-                : "hidden";
-
-            return (
-              <motion.div
-                key={i}
-                variants={variants}
-                animate={pos}
-                transition={{
-                  type: "spring",
-                  stiffness: 110,
-                  damping: 20,
-                  mass: 0.8,
-                }}
-                className={`absolute w-full max-w-3xl p-10 rounded-3xl shadow-xl transform-gpu will-change-transform transition-colors
-                ${pos === "center" ? "bg-(--bg-main)" : "bg-gray-100 grayscale"}`}
+    <div className="w-full max-w-3xl mx-auto relative">
+      {/* ================= SLIDER TRACK ================= */}
+      <div className="overflow-hidden rounded-2xl">
+        <motion.div
+          className="flex"
+          animate={{ x: `-${index * 100}%` }}
+          transition={{
+            type: "spring",
+            stiffness: 90,
+            damping: 18,
+          }}
+        >
+          {projects.map((project) => (
+            <div key={project.id} className="min-w-full px-2">
+              <div
+                className="
+                  group relative
+                  rounded-2xl overflow-hidden
+                  border border-[var(--glass-border)]
+                  bg-[var(--glass-bg)]
+                  backdrop-blur-xl
+                  transition-all duration-300
+                  hover:-translate-y-1
+                  hover:shadow-[var(--shadow-hover)]
+                "
               >
-                <CardContent data={project} />
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
+                {/* IMAGE */}
+                <div className="relative w-full h-[180px] md:h-[220px]">
+                  <Image
+                    src={project.icon}
+                    alt={project.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
 
-      {/* ================= MOBILE ================= */}
+                {/* CONTENT */}
+                <div className="p-5 md:p-6">
+                  <h3 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] group-hover:text-[var(--color-blue)] transition-colors duration-300">
+                    {project.title}
+                  </h3>
 
-      <div className="lg:hidden relative w-full">
+                  <div className="flex gap-3 mt-2 text-xs text-[var(--text-secondary)]">
+                    <span>{project.industry}</span>
+                    <span>•</span>
+                    <span>{project.scope}</span>
+                  </div>
 
-        <div className="overflow-hidden touch-pan-y">
+                  <p className="mt-3 text-sm text-[var(--text-secondary)] leading-relaxed">
+                    {project.description}
+                  </p>
 
-          <motion.div
-            className="flex"
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.2}
-            dragMomentum={false}
-            onDragEnd={(e, info) => {
-
-              const swipeThreshold = 50;
-
-              if (info.offset.x < -swipeThreshold) nextManual();
-              else if (info.offset.x > swipeThreshold) prevManual();
-            }}
-            animate={{ x: `calc(-${index * 100}%)` }}
-            transition={{
-              type: "spring",
-              stiffness: 120,
-              damping: 18,
-              mass: 0.9,
-            }}
-          >
-            {projects.map((project, i) => (
-              <div key={i} className="min-w-full px-1">
-
-                <div className="bg-(--bg-main) rounded-2xl p-6 border border-(--border-color) shadow-sm">
-
-                  <CardContent data={project} />
-
+                  <div className="mt-5">
+                    <Button variant="warm">
+                      View project
+                    </Button>
+                  </div>
                 </div>
               </div>
-            ))}
-          </motion.div>
-
-        </div>
+            </div>
+          ))}
+        </motion.div>
       </div>
 
-      {/* ================= BUTTONS ================= */}
-
-      <div className="flex justify-center gap-5 mt-5">
-
+      {/* ================= CONTROLS ================= */}
+      <div className="flex items-center justify-between mt-6">
+        {/* PREV */}
         <button
-          onClick={() => {
-            setAutoPlay(false);
-            prevManual();
-          }}
+          onClick={prev}
           disabled={index === 0}
-          className="py-2 px-3 rounded-full border bg-(--bg-main) disabled:opacity-30 shadow-sm"
+          className="
+            px-3 py-2 rounded-full
+            border border-[var(--glass-border)]
+            bg-[var(--glass-bg)]
+            backdrop-blur-md
+            hover:shadow-[var(--shadow-soft)]
+            disabled:opacity-30
+            transition-all duration-300
+          "
         >
           ←
         </button>
 
+        {/* DOTS */}
+        <div className="flex gap-2">
+          {projects.map((_, i) => (
+            <div
+              key={i}
+              className={`h-1.5 w-1.5 rounded-full transition ${
+                i === index
+                  ? "bg-[var(--color-blue)] scale-125"
+                  : "bg-[var(--bg-secondary)]"
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* NEXT */}
         <button
-          onClick={() => {
-            setAutoPlay(false);
-            nextManual();
-          }}
-          disabled={index === total - 1}
-          className="py-2 px-3 rounded-full border bg-(--bg-main) disabled:opacity-30 shadow-sm"
+          onClick={next}
+          disabled={index === projects.length - 1}
+          className="
+            px-3 py-2 rounded-full
+            border border-[var(--glass-border)]
+            bg-[var(--glass-bg)]
+            backdrop-blur-md
+            hover:shadow-[var(--shadow-soft)]
+            disabled:opacity-30
+            transition-all duration-300
+          "
         >
           →
         </button>
-
-      </div>
-    </WrapperCard>
-  );
-}
-
-function CardContent({ data }) {
-  return (
-    <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center lg:items-stretch ">
-
-      <div className="flex flex-col justify-between flex-1 text-center lg:text-left">
-
-        <div className="flex flex-col gap-3">
-
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold">
-            {data.title}
-          </h2>
-
-          <div className="text-xs sm:text-sm space-y-1">
-
-            <p>
-              <span className="text-(--text-muted) uppercase text-xs mr-2">
-                Industry
-              </span>
-              {data.industry}
-            </p>
-
-            <p>
-              <span className="text-(--text-muted) uppercase text-xs mr-2">
-                Scope
-              </span>
-              {data.scope}
-            </p>
-
-          </div>
-        </div>
-
-        <p className="text-(--text-secondary) text-sm sm:text-base mt-4 lg:mt-6">
-          {data.description}
-        </p>
-
-        <Button>
-          View project detail
-        </Button>
-
-      </div>
-
-      <div className="relative w-full h-50 sm:h-65 lg:w-90 lg:h-90 rounded-2xl overflow-hidden">
-
-        <Image
-          src={data.icon}
-          alt="Project"
-          fill
-          className="object-cover"
-        />
-
       </div>
     </div>
   );

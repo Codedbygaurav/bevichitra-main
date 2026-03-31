@@ -6,7 +6,9 @@ export default function ReadingProgress() {
   const [width, setWidth] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => {
+    let ticking = false;
+
+    const update = () => {
       const scrollTop = window.scrollY;
 
       const docHeight =
@@ -15,6 +17,14 @@ export default function ReadingProgress() {
 
       const progress = (scrollTop / docHeight) * 100;
       setWidth(progress);
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -22,17 +32,17 @@ export default function ReadingProgress() {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 w-full h-[4px] z-[100] backdrop-blur-sm">
-      
-      {/* background track */}
-      <div className="absolute inset-0 bg-white/10"></div>
+    <div className="fixed top-0 left-0 w-full h-[3px] z-[100]">
+      {/* TRACK */}
+      <div className="absolute inset-0 bg-[var(--bg-secondary)]/60 backdrop-blur-sm" />
 
-      {/* progress bar */}
+      {/* PROGRESS */}
       <div
-        className="h-full transition-[width] duration-150 ease-out 
-        bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600
-        shadow-[0_0_10px_rgba(249,115,22,0.7)]"
-        style={{ width: `${width}%` }}
+        className="h-full transition-[width] duration-200 ease-out"
+        style={{
+          width: `${width}%`,
+          background: "var(--gradient-brand)",
+        }}
       />
     </div>
   );

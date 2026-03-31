@@ -4,161 +4,229 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMenu } from "@/context/NavContext";
 import { NavItems } from "@/data/NavData";
-import Button from "../ui/Button";
+import { Sun, Moon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import ContactPopup from "../ui/ContactPopup";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { menuOpen, setMenuOpen } = useMenu();
-  const [showNav, setShowNav] = useState(true);
 
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [dark, setDark] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  /* ================= SCROLL ================= */
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  /* ================= LOCK SCROLL ================= */
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "auto";
+
     return () => {
       document.body.style.overflow = "auto";
     };
   }, [menuOpen]);
 
+  /* ================= THEME INIT ================= */
   useEffect(() => {
-    let lastScroll = window.scrollY;
+    const savedTheme = localStorage.getItem("theme");
 
-    const handleScroll = () => {
-      const currentScroll = window.scrollY;
-
-      if (currentScroll > lastScroll && currentScroll > 100) {
-        setShowNav(false); // scrolling down
-      } else {
-        setShowNav(true); // scrolling up
-      }
-
-      lastScroll = currentScroll;
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    if (savedTheme === "dark") {
+      setDark(true);
+      document.documentElement.classList.add("dark");
+    }
   }, []);
+
+  /* ================= TOGGLE ================= */
+  const toggleTheme = () => {
+    const newTheme = !dark;
+    setDark(newTheme);
+
+    if (newTheme) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
 
   return (
     <>
-      <nav
-        className={`fixed left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-xl transition-all duration-500 ${showNav ? "top-6 opacity-100" : "-top-32 opacity-0"}`}>
-        <div className="bg-(--bg-main) backdrop-blur-md shadow-xl rounded-2xl overflow-hidden">
-          <div className="flex justify-between items-center px-5 py-3 border-b border-(--border-color)">
-            {/* Logo */}
-            <div className="flex items-center justify-center">
-              <div className="p-1 bg-(--bg-main) mr-2 rounded-xl border-3 border-(--logo-border)">
-                <Image
-                  src="/images/logoIcon.png"
-                  alt="Logo"
-                  width={35}
-                  height={35}
-                />
-              </div>
+      {/* BACKDROP BLUR */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setMenuOpen(false)}
+            className="fixed inset-0 z-40 bg-black/10 backdrop-blur-sm md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ================= NAV ================= */}
+      <nav className="fixed top-4 left-0 w-full z-50 flex justify-center">
+        <motion.div
+          layout
+          transition={{ duration: 0.25 }}
+          className={`relative w-[92%] max-w-4xl rounded-3xl border border-[var(--nav-border)] overflow-hidden transition-all duration-300 ${
+            scrolled || menuOpen
+              ? "bg-[var(--glass-bg)] backdrop-blur-xl shadow-[var(--shadow-soft)]"
+              : "bg-transparent"
+          }`}
+        >
+          {/* TOP BAR */}
+          <div className="flex items-center justify-between px-4 sm:px-6 py-3">
+            {/* LOGO */}
+            <div className="flex items-center gap-2">
+              <Image
+                src="/images/logoIcon.png"
+                alt="Logo"
+                width={32}
+                height={32}
+              />
 
               <Image
                 src="/images/logoName.png"
                 alt="Logo"
-                width={100}
-                height={100}
-                className="pb-2"
+                width={90}
+                height={40}
+                className="w-[70px] sm:w-[90px] h-auto"
               />
             </div>
 
-            {/* Menu Button */}
-            <div className="border-l border-r px-8 py-2 border-(--border-color)">
-              <button
-                onClick={() => setMenuOpen(!menuOpen)}
-                className="relative w-8 h-8 flex items-center justify-center cursor-pointer"
-              >
-                <span
-                  className={`absolute text-3xl text-(--text-primary) transition-all duration-500 ${
-                    menuOpen
-                      ? "opacity-0 scale-75 rotate-90"
-                      : "opacity-100 scale-100 rotate-0"
-                  }`}
-                >
-                  ☰
-                </span>
+            {/* DESKTOP NAV */}
+            <div className="hidden md:flex items-center gap-8 text-sm">
+              {NavItems.map((item) => {
+                const isActive = pathname === item.link;
 
-                <span
-                  className={`absolute text-2xl text-(--text-primary) transition-all duration-500 ${
-                    menuOpen
-                      ? "opacity-100 scale-100 rotate-0"
-                      : "opacity-0 scale-75 -rotate-90"
-                  }`}
-                >
-                  ✕
-                </span>
-              </button>
-            </div>
-
-            <Button className="hidden sm:block" variant="dark">
-              Get started
-            </Button>
-          </div>
-
-          {/* Expanded Menu */}
-          <div
-            className={`px-5 overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              menuOpen ? "max-h-[600px] py-5" : "max-h-0 py-0"
-            }`}
-          >
-            <div className="space-y-5">
-              {/* Links */}
-              <div className="space-y-4 text-xl text-(--text-primary)">
-                {NavItems.map((item) => (
+                return (
                   <Link
                     key={item.id}
                     href={item.link}
-                    onClick={() => setMenuOpen(false)}
-                    className={`block border-b border-(--border-color) pb-3 transition-colors duration-200 hover:text-(--color-primary) ${
-                      pathname === item.link ? "text-(--color-primary)" : ""
-                    } stagger-item ${menuOpen ? "show" : ""}`}
-                    style={{ animationDelay: `${item.id * 0.05}s` }}
+                    className={`relative transition ${
+                      isActive
+                        ? "text-[var(--text-primary)]"
+                        : "text-[var(--text-secondary)] hover:text-[var(--color-blue)]"
+                    }`}
                   >
                     {item.title}
+
+                    {isActive && (
+                      <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[var(--color-blue)]" />
+                    )}
                   </Link>
-                ))}
-              </div>
+                );
+              })}
+            </div>
 
-              {/* Bottom */}
-              <div className="flex justify-between items-end pt-3">
-                {/* Social */}
-                <div className="flex gap-2 text-(--text-primary)">
-                  {["f", "ig", "in", "x"].map((icon, i) => (
-                    <div
-                      key={i}
-                      className={`w-10 h-10 bg-(--bg-tertiary) rounded-lg flex items-center justify-center stagger-item ${
-                        menuOpen ? "show" : ""
-                      }`}
-                      style={{ animationDelay: `${0.4 + i * 0.08}s` }}
-                    >
-                      {icon}
-                    </div>
-                  ))}
-                </div>
+            {/* RIGHT */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* THEME */}
+              <button
+                onClick={toggleTheme}
+                className="w-10 h-10 flex items-center justify-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-md hover:shadow-[var(--shadow-soft)] transition"
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={dark ? "sun" : "moon"}
+                    initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
+                    animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                    exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {dark ? <Sun size={16} /> : <Moon size={16} />}
+                  </motion.div>
+                </AnimatePresence>
+              </button>
 
-                {/* Copyright */}
-                <p className="text-sm text-(--text-muted) flex flex-col items-start sm:flex-row sm:items-center sm:gap-1">
-                  <span>© 2026</span>
-                  <span>beVichitra</span>
-                </p>
-              </div>
+              {/* DESKTOP CTA */}
+              <button
+                onClick={() => setOpen(true)}
+                className="hidden md:block px-5 py-2 rounded-full text-white text-sm font-medium bg-[linear-gradient(135deg,var(--color-blue),var(--color-yellow))] shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] hover:scale-[1.05] transition-all duration-300"
+              >
+                Get Started
+              </button>
+
+              {/* MOBILE MENU BTN */}
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="md:hidden w-8 h-8 flex items-center justify-center relative text-[var(--text-primary)]"
+              >
+                <span
+                  className={`absolute w-5 h-[2px] bg-current transition ${
+                    menuOpen ? "rotate-45" : "-translate-y-1.5"
+                  }`}
+                />
+                <span
+                  className={`absolute w-5 h-[2px] bg-current transition ${
+                    menuOpen ? "-rotate-45" : "translate-y-1.5"
+                  }`}
+                />
+              </button>
             </div>
           </div>
-        </div>
+
+          {/* MOBILE EXPAND INSIDE SAME NAV */}
+          <AnimatePresence>
+            {menuOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="md:hidden overflow-hidden border-t border-[var(--glass-border)]"
+              >
+                <div className="px-6 py-5 flex flex-col gap-5">
+                  {NavItems.map((item) => {
+                    const isActive = pathname === item.link;
+
+                    return (
+                      <Link
+                        key={item.id}
+                        href={item.link}
+                        onClick={() => setMenuOpen(false)}
+                        className={`text-lg font-medium transition ${
+                          isActive
+                            ? "text-[var(--color-blue)]"
+                            : "text-[var(--text-primary)] hover:text-[var(--color-blue)]"
+                        }`}
+                      >
+                        {item.title}
+                      </Link>
+                    );
+                  })}
+
+                  <button
+                    onClick={() => {
+                      setOpen(true);
+                      setMenuOpen(false);
+                    }}
+                    className="mt-4 w-full px-5 py-3 rounded-full text-white bg-[linear-gradient(135deg,var(--color-blue),var(--color-yellow))] shadow-[var(--shadow-soft)]"
+                  >
+                    Get Started
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </nav>
 
-      <div
-        onClick={() => setMenuOpen(false)}
-        className={`fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
-          menuOpen ? "opacity-100 visible z-40" : "opacity-0 invisible"
-        }`}
-      />
+      <ContactPopup open={open} setOpen={setOpen} />
     </>
   );
 }

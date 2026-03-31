@@ -12,6 +12,7 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@netlify/plugin-nextjs": "^5.15.9",
     "@tailwindcss/typography": "^0.5.19",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.9.0",
@@ -23,7 +24,9 @@
     "lucide-react": "^0.575.0",
     "mongoose": "^9.2.4",
     "next": "16.1.6",
+    "nodemailer": "^8.0.3",
     "react": "19.2.3",
+    "react-calendly": "^4.4.0",
     "react-dom": "19.2.3",
     "react-masonry-css": "^1.0.16"
   },

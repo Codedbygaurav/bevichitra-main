@@ -1,194 +1,169 @@
 @import "tailwindcss";
-
 @plugin "@tailwindcss/typography";
 
-/* :root {
-  --background: #fbf9ea;
-  --title: #171717;
-  --signatureOrange: #F58840;
-  --text: #4a5565;
-  
-} */
-  :root {
+/* ================= ROOT (LIGHT THEME) ================= */
+:root {
+  /* 🎨 BRAND SYSTEM */
+  --color-blue: #286cb5;
+  --color-blue-dark: #21387a;
+  --color-yellow: #f6bc23;
+  --color-red: #e01f44;
 
-    /* Brand */
-  --color-primary: #ff6321;
-  --color-accent: #ff8a50;
+  /* 🔥 PRIMARY ACTION */
+  --color-primary: var(--color-red);
+  --color-secondary: var(--color-blue);
 
-  /* Background */
-  --bg-main: #f8f6f4;
-  --bg-secondary: #f1eeea;
-  --bg-tertiary: #e7e3de;
+  /* 🎨 BACKGROUND */
+  --bg-main: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-elevated: rgba(255, 255, 255, 0.75);
 
-  /* Gradients */
-  --gradient-main: linear-gradient(135deg, #f8f6f4 0%, #f1eeea 40%, #f8f6f4 100%);
-  --gradient-accent: linear-gradient(135deg, #ff6321 0%, #ff8a50 100%);
+  /* 🌈 GRADIENT SYSTEM */
+  --gradient-primary: linear-gradient(135deg, #286cb5, #f6bc23);
+  --gradient-cta: linear-gradient(135deg, #286cb5, #e01f44);
+  --gradient-brand: linear-gradient(135deg, #286cb5, #f6bc23, #e01f44);
+  --gradient-warm: linear-gradient(135deg, #f6bc23, #e01f44);
+  --gradient-soft: radial-gradient(
+    circle at 20% 30%,
+    rgba(40, 108, 181, 0.08),
+    transparent 60%
+  );
 
-  /* Text */
-  --text-primary: #0f0f14;
-  --text-secondary: #5c5646;
-  --text-muted: #8b8577;
-  --sub-heading: #6f6a5c;
-  --inner-text: #ffffff;
+  /* 📝 TEXT */
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
 
-  /* UI */
-  --border-color: #dedad4;
-  --border-light: rgba(0, 0, 0, 0.05);
+  /* 🧱 BORDER */
+  --border: #e5e7eb;
+  --nav-border: rgba(0, 0, 0, 0.08);
 
-  /* Depth */
-  --card-bg: rgba(255, 255, 255, 0.7);
-  --glass-bg: rgba(255, 255, 255, 0.4);
-  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.05);
-  --shadow-medium: 0 15px 40px rgba(0, 0, 0, 0.08);
+  /* 🧊 GLASS */
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(0, 0, 0, 0.08);
 
-  /* States */
-  --button-hover: #e85a3d;
+  /* 🌑 SHADOW */
+  --shadow-soft: 0 15px 50px rgba(0, 0, 0, 0.12);
+  --shadow-hover: 0 18px 40px rgba(0, 0, 0, 0.16);
+}
 
-
-    /* Arc Process Section */
-    --arc-stroke: #ECEAE8;
-    --arc-fill-top: #EEECE9;
-    --arc-fill-bottom: #F3F3F3;
-    --step-inactive-bg: #FFFFFF;
-    --step-inactive-text: #9CA3AF;
-
-  }
-
-[data-theme="dark"] {
-
-  /* brand */
-  --color-primary: #6366F1;
-  --color-accent: #FF8C42;
-
-  /* backgrounds */
-  --bg-main: #0B0F19;
+/* ================= DARK THEME ================= */
+.dark {
+  --bg-main: #0f172a;
   --bg-secondary: #111827;
-  --bg-tertiary: #1F2937;
+  --bg-elevated: rgba(255, 255, 255, 0.05);
 
-  /* text */
-  --text-primary: #F9FAFB;
-  --text-secondary: #9CA3AF;
-  --text-muted: #6B7280;
+  --text-primary: #ffffff;
+  --text-secondary: #cbd5e1;
 
-  /* borders */
-  --border-color: #374151;
+  --border: rgba(255, 255, 255, 0.1);
+  --nav-border: rgba(255, 255, 255, 0.08);
 
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.1);
 
+  --gradient-soft: radial-gradient(
+    circle at 30% 20%,
+    rgba(40, 108, 181, 0.12),
+    transparent 60%
+  );
 
+  --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 18px 50px rgba(0, 0, 0, 0.5);
 }
 
-
+/* ================= BASE ================= */
 html {
-  scrollbar-gutter: stable;
-  scroll-behavior: smooth;
+scrollbar-gutter: stable;
+scroll-behavior: smooth;
 }
+
 body {
-  background: var(--bg-main);
-  color: var(--text-primary);
-  font-family: Arial, Helvetica, sans-serif;
+background: var(--bg-main);
+color: var(--text-primary);
+transition: background 0.3s ease, color 0.3s ease;
 }
 
-@keyframes fadeSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ================= UTILITIES ================= */
+
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+display: none;
+}
+.no-scrollbar {
+-ms-overflow-style: none;
+scrollbar-width: none;
 }
 
-.stagger-item {
-  opacity: 0;
-  transform: translateY(16px);
+/* Glass */
+.glass {
+background: var(--glass-bg);
+backdrop-filter: blur(20px);
+border: 1px solid var(--glass-border);
+box-shadow: var(--shadow-soft);
 }
 
-.stagger-item.show {
-  animation: fadeSlideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+/* Gradient text */
+.gradient-text {
+background: var(--gradient-primary);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
 }
 
-/* Hide scrollbar - Chrome, Safari */
-.custom-scroll::-webkit-scrollbar {
-  display: none;
+
+/* Section background */
+.section-bg {
+background: var(--gradient-soft);
 }
 
-/* Hide scrollbar - Firefox */
-.custom-scroll {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
-}
-
+/* ================= ANIMATIONS ================= */
 @keyframes slideLeft {
-  from {
-    transform: translateX(40px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+from {
+transform: translateX(40px);
+opacity: 0;
+}
+to {
+transform: translateX(0);
+opacity: 1;
+}
 }
 
 @keyframes slideRight {
-  from {
-    transform: translateX(-40px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+from {
+transform: translateX(-40px);
+opacity: 0;
+}
+to {
+transform: translateX(0);
+opacity: 1;
+}
 }
 
 .animate-slide-left {
-  animation: slideLeft 0.4s ease forwards;
+animation: slideLeft 0.4s ease forwards;
 }
 
 .animate-slide-right {
-  animation: slideRight 0.4s ease forwards;
+animation: slideRight 0.4s ease forwards;
 }
 
-/* for ourProjectCards */
-
-@keyframes slideOutLeft {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-120%); }
-}
-
-@keyframes slideOutRight {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(120%); }
-}
-
-.animate-slide-left {
-  animation: slideOutLeft 0.7s ease-in-out forwards;
-}
-
-.animate-slide-right {
-  animation: slideOutRight 0.7s ease-in-out forwards;
-}
-
-/* for Testimonial */
-
+/* ================= 3D ================= */
 .transform-style-preserve-3d {
-  transform-style: preserve-3d;
+transform-style: preserve-3d;
 }
 
 .backface-hidden {
-  backface-visibility: hidden;
+backface-visibility: hidden;
 }
 
 .rotate-y-180 {
-  transform: rotateY(180deg);
+transform: rotateY(180deg);
 }
 
 .perspective-strong {
-  perspective: 1500px;
+perspective: 1500px;
 }
 
-
-.calendly-inline-widget {
-  min-width: 100%;
-  height: 100%;
+/* iframe scrollbar */
+iframe::-webkit-scrollbar {
+display: none;
 }

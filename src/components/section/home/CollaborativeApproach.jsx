@@ -1,194 +1,183 @@
 "use client";
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import SectionHeader from '@/components/ui/SectionHeader';
-import { steps } from '@/data/process';
+import { useState } from "react";
+import { steps } from "@/data/process";
+import { motion } from "framer-motion";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 export default function CollaborativeApproach() {
-  const [activeStep, setActiveStep] = useState(0);
-
-  const RADIUS = 480;
-  const CENTER_X = 500;
-  const CENTER_Y = 670; 
-  const ANGLE_GAP = 55; 
+  const [active, setActive] = useState(0);
 
   return (
-    <div className="flex flex-col items-center bg-(--bg-main) min-h-screen py-20 px-4 overflow-hidden font-sans">
-      <SectionHeader label={"Process"} title={"Collaborative Approach"} />
+    <section className="relative py-16 md:py-24" id="process">
+      {/* BACKGROUND DEPTH */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(40,108,181,0.03),transparent)]" />
+      </div>
 
-      <div className="relative w-full max-w-6xl aspect-[2/1.1]">
-        <svg viewBox="0 100 1000 500" className="overflow-visible w-full h-full">
-          
-          <defs>
+      <div className="max-w-5xl mx-auto px-4 md:px-6 text-center relative z-10">
+        {/* HEADER */}
+        <SectionHeader
+          label="Our Process"
+          title={["How we turn ideas", "into real products"]}
+          description="A structured, collaborative process designed to move fast without compromising quality."
+        />
 
-            <linearGradient id="arcFillGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--bg-secondary)" />
-              <stop offset="100%" stopColor="var(--bg-main)" />
-            </linearGradient>
-
-            <filter id="depthStrokeFilter" x="-50%" y="-50%" width="200%" height="200%">
-              <feDropShadow dx="0" dy="-1" stdDeviation="0.8" floodColor="#b8b8b8" floodOpacity="0.65" />
-              <feDropShadow dx="0" dy="2" stdDeviation="0.1" floodColor="#ffffff" floodOpacity="0.4" />
-            </filter>
-
-            <linearGradient id="strokeGradientFade" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="var(--arc-fill-bottom)" stopOpacity="0" />
-              <stop offset="5%" stopColor="var(--arc-stroke)" stopOpacity="1" />
-              <stop offset="10%" stopColor="var(--arc-stroke)" stopOpacity="1" />
-              <stop offset="20%" stopColor="var(--arc-stroke)" stopOpacity="1" />
-              <stop offset="80%" stopColor="var(--arc-stroke)" stopOpacity="1" />
-              <stop offset="90%" stopColor="var(--arc-stroke)" stopOpacity="1" />
-              <stop offset="95%" stopColor="var(--arc-stroke)" stopOpacity="1" />
-              <stop offset="100%" stopColor="var(--arc-fill-bottom)" stopOpacity="0" />
-            </linearGradient>
-
-            <linearGradient id="whiteLine" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="var(--arc-fill-bottom)" stopOpacity="0" />
-              <stop offset="5%" stopColor="var(--arc-stroke)" stopOpacity="0" />
-              <stop offset="10%" stopColor="var(--arc-stroke)" stopOpacity="1" />
-              <stop offset="20%" stopColor="var(--arc-stroke)" stopOpacity="1" />
-              <stop offset="80%" stopColor="var(--arc-stroke)" stopOpacity="1" />
-              <stop offset="90%" stopColor="var(--arc-stroke)" stopOpacity="1" />
-              <stop offset="95%" stopColor="var(--arc-stroke)" stopOpacity="0" />
-              <stop offset="100%" stopColor="var(--arc-stroke)" stopOpacity="0" />
-            </linearGradient>
-
-          </defs>
-
-          <path
-            d="M 50,500 A 480,480 0 0 1 950,500"
-            fill="url(#arcFillGradient)"
-            stroke="url(#whiteLine)"
-          />
-
-          <path
-            d="M 50,500 A 480,480 0 0 1 950,500"
-            fill="none"
-            stroke="url(#strokeGradientFade)"
-            strokeWidth="10"
-            filter="url(#depthStrokeFilter)"
-          />
-
+        {/* ================= STEPS ================= */}
+        <div className="mt-14 flex items-center">
           {steps.map((step, index) => {
-
-            const isVisible = index >= activeStep - 1 && index <= activeStep + 1;
-            const isActive = activeStep === index;
-
-            const angle = 90 - (index - activeStep) * ANGLE_GAP;
-            const rad = (angle * Math.PI) / 180;
-            const targetX = CENTER_X + RADIUS * Math.cos(rad);
-            const targetY = CENTER_Y - RADIUS * Math.sin(rad);
-
-            const getRotation = () => {
-              if (isActive) return 0;
-              if (index > activeStep) return 60;
-              return 300;
-            };
+            const isActive = index === active;
+            const isDone = index < active;
 
             return (
-              <motion.g
-                key={step.id}
-                initial={false}
-                animate={{
-                  x: targetX,
-                  y: targetY,
-                  opacity: isVisible ? 1 : 0,
-                  scale: isVisible ? (isActive ? 1.1 : 0.85) : 0.5,
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 100,
-                  damping: 20,
-                  mass: 1.2
-                }}
-                className="cursor-pointer"
-                onClick={() => setActiveStep(index)}
-              >
-
-                <motion.rect
-                  width="60"
-                  height="60"
-                  rx="14"
-                  x="-30"
-                  y="-30"
-                  animate={{
-                    rotate: getRotation(),
-                    fill: isActive ? "var(--color-primary)" : "var(--bg-main)",
-                    stroke: isActive ? "var(--color-primary)" : "var(--border-color)",
-                    strokeWidth: isActive ? 0 : 1
-                  }}
-                />
-
-                <motion.text
-                  textAnchor="middle"
-                  dy="5"
-                  animate={{
-                    fill: isActive ? "var(--bg-main)" : "var(--text-muted)",
-                    rotate: getRotation()
-                  }}
-                  className="text-lg font-bold select-none pointer-events-none"
+              <div key={step.id} className="flex items-center flex-1">
+                {/* STEP */}
+                <button
+                  onClick={() => setActive(index)}
+                  className="flex flex-col items-center z-10"
                 >
-                  {step.id}
-                </motion.text>
-
-                {isActive && (
-                  <motion.text
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: -45 }}
-                    textAnchor="middle"
-                    className="text-[10px] font-black fill-(--text-muted) tracking-[0.2em]"
+                  {/* LABEL */}
+                  <span
+                    className={`text-xs mb-2 transition ${
+                      isActive
+                        ? "text-[var(--color-red)]"
+                        : isDone
+                        ? "text-[var(--text-secondary)] opacity-70"
+                        : "opacity-0"
+                    }`}
                   >
-                    STEP
-                  </motion.text>
-                )}
+                    Step {index + 1}
+                  </span>
 
-              </motion.g>
+                  {/* CIRCLE */}
+                  <motion.div
+                    animate={{ scale: isActive ? 1.15 : 1 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                    className={`w-10 h-10 sm:mb-5 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-300
+                    ${
+                      isActive
+                        ? "bg-[var(--color-red)] text-white shadow-[var(--shadow-soft)]"
+                        : isDone
+                        ? "bg-[rgba(40,108,181,0.15)] text-[var(--color-blue)]"
+                        : "bg-[var(--glass-bg)] text-[var(--text-secondary)] border border-[var(--glass-border)] backdrop-blur-md"
+                    }`}
+                  >
+                    {index + 1}
+                  </motion.div>
+                </button>
+
+                {/* LINE */}
+                {index !== steps.length - 1 && (
+                  <div className="flex-1 h-[3px] mx-2 rounded-full bg-[var(--bg-secondary)] relative overflow-hidden">
+                    <motion.div
+                      className="absolute top-0 left-0 h-full bg-[var(--color-blue)]"
+                      animate={{
+                        width:
+                          index < active
+                            ? "100%"
+                            : index === active
+                            ? "50%"
+                            : "0%",
+                      }}
+                      transition={{ duration: 0.4 }}
+                    />
+                  </div>
+                )}
+              </div>
             );
           })}
-        </svg>
-
-        <div className="absolute top-[35%] left-1/2 -translate-x-1/2 w-full max-w-xl text-center">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeStep}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.3 }}
-            >
-              <h2 className="text-5xl font-semibold text-(--text-primary) mb-5 tracking-tight">
-                {steps[activeStep].title}
-              </h2>
-
-              <p className="text-(--text-secondary) text-md leading-relaxed mb-7 px-8">
-                {steps[activeStep].description}
-              </p>
-
-              <div className="flex justify-center items-center gap-4 text-[10px] font-bold text-(--text-muted) tracking-[0.2em] mb-8 uppercase">
-                {steps[activeStep].tags.map((tag, i) => (
-                  <React.Fragment key={tag}>
-                    <span>{tag}</span>
-                    {i < steps[activeStep].tags.length - 1 && (
-                      <span className="w-1.5 h-1.5 bg-(--bg-tertiary) rounded-full" />
-                    )}
-                  </React.Fragment>
-                ))}
-              </div>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-(--color-primary) text-(--bg-main) px-7 py-4 rounded-2xl font-bold text-md"
-              >
-                Start your project
-              </motion.button>
-
-            </motion.div>
-          </AnimatePresence>
         </div>
 
+        {/* ================= CONTENT ================= */}
+        <motion.div
+          key={active}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="mt-12 max-w-2xl mx-auto"
+        >
+          <div
+            className="
+              relative
+              rounded-2xl p-6 md:p-10
+              border border-[var(--glass-border)]
+              bg-[var(--glass-bg)]
+              backdrop-blur-xl
+              shadow-[var(--shadow-soft)]
+              overflow-hidden
+            "
+          >
+            {/* GRADIENT DEPTH */}
+            <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(40,108,181,0.05),transparent)] pointer-events-none" />
+
+            <div className="relative z-10">
+              <h3 className="text-xl md:text-3xl font-semibold text-[var(--text-primary)]">
+                {steps[active].title}
+              </h3>
+
+              <p className="mt-4 text-[var(--text-secondary)] leading-relaxed">
+                {steps[active].description}
+              </p>
+
+              <div className="flex flex-wrap justify-center gap-2 mt-6">
+                {steps[active].tags.map((tag, i) => (
+                  <span
+                    key={i}
+                    className="
+                      text-xs px-3 py-1 rounded-full
+                      bg-[var(--bg-secondary)]
+                      text-[var(--text-secondary)]
+                      border border-[var(--border)]
+                      transition
+                      hover:text-[var(--color-blue)]
+                      hover:border-[var(--color-blue)]
+                    "
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* ================= CONTROLS ================= */}
+        <div className="flex justify-center gap-4 mt-8">
+          <button
+            onClick={() => setActive((prev) => Math.max(prev - 1, 0))}
+            disabled={active === 0}
+            className="
+              px-4 py-2 rounded-full
+              border border-[var(--glass-border)]
+              bg-[var(--glass-bg)]
+              backdrop-blur-md
+              hover:shadow-[var(--shadow-soft)]
+              disabled:opacity-30
+              transition
+            "
+          >
+            ← Back
+          </button>
+
+          <button
+            onClick={() =>
+              setActive((prev) => Math.min(prev + 1, steps.length - 1))
+            }
+            disabled={active === steps.length - 1}
+            className="
+              px-4 py-2 rounded-full
+              border border-[var(--glass-border)]
+              bg-[var(--glass-bg)]
+              backdrop-blur-md
+              hover:shadow-[var(--shadow-soft)]
+              disabled:opacity-30
+              transition
+            "
+          >
+            Next →
+          </button>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

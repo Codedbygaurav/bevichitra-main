@@ -1,31 +1,38 @@
-import ServiceText from "../services/ServiceText";
-import ServiceCard from "../services/ServiceCard";
-import ServiceMobile from "../services/ServiceMobile";
+"use client";
+
+import ServiceText from "./ServiceText";
+import ServiceCardItem from "./ServiceCardItem";
+import { services } from "@/data/services";
+import Reveal from "@/components/ui/Reveal";
 
 export default function Services() {
-  return (
-    <>
-      {/* DESKTOP ONLY */}
-      <section className="mx-32 py-32 hidden xl:block bg-(--bg-main)">
-        <div className="flex justify-between gap-24 relative">
+return ( 
 
-          <div className="w-full max-w-md relative">
-            <div className="sticky top-32">
-              <ServiceText/>
-            </div>
-          </div>
+<section className="relative py-20 md:py-32" id="services">
 
-          <div className="w-full max-w-md">
-            <ServiceCard />
-          </div>
 
-        </div>
-      </section>
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 md:gap-20 relative z-10">
 
-      {/* MOBILE + TABLET ONLY */}
-      <div className="xl:hidden bg-(--bg-main)">
-        <ServiceMobile />
-      </div>
-    </>
-  );
+    {/* LEFT */}
+    <div className="lg:sticky lg:top-32 h-fit">
+      <Reveal>
+        <ServiceText />
+      </Reveal>
+    </div>
+
+    {/* RIGHT */}
+    <div className="flex flex-col gap-6 md:gap-8">
+
+      {services.map((service, index) => (
+        <Reveal key={service.id} delay={index * 0.1}>
+          <ServiceCardItem service={service} />
+        </Reveal>
+      ))}
+
+    </div>
+
+  </div>
+</section>
+
+);
 }

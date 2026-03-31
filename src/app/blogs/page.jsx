@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 async function getBlogs() {
-
   const client = await clientPromise;
   const db = client.db("blogDB");
 
@@ -15,46 +14,46 @@ async function getBlogs() {
     .toArray();
 
   return blogs;
-
 }
 
 export default async function BlogPage() {
-
   const blogs = await getBlogs();
   const featured = blogs[0];
   const rest = blogs.slice(1);
 
   return (
+    <main className="w-full section-bg">
 
-    <main className="w-full">
+      {/* ================= HERO ================= */}
+      <section className="pt-40 pb-20 text-center">
+        <div className="max-w-3xl mx-auto px-4 md:px-6">
 
-      {/* HERO */}
-      <section className="border-b border-(--border-color)">
-        <div className="max-w-6xl mx-auto px-6 pb-14 pt-40 text-center">
-
-          <h1 className="text-5xl font-bold tracking-tight mb-5">
-            Our Blogs
+          <h1 className="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.1]">
+            Insights that
+            <span className="block gradient-text">
+              actually matter
+            </span>
           </h1>
 
-          <p className="text-(--text-muted) max-w-2xl mx-auto text-lg">
-            Lorem ipsum dolorsit amet consectetur adipisicing elitCulpa, aliquam.
+          <p className="mt-6 text-[var(--text-secondary)] text-lg">
+            Ideas, strategies, and insights to help you build better digital products.
           </p>
 
         </div>
       </section>
 
-
-      <section className="max-w-6xl mx-auto px-6 py-15">
+      {/* ================= CONTENT ================= */}
+      <section className="max-w-6xl mx-auto px-4 md:px-6 pb-24">
 
         {blogs.length === 0 ? (
 
           <div className="text-center py-32">
 
-            <h2 className="text-2xl font-semibold mb-4">
+            <h2 className="text-2xl font-semibold mb-4 text-[var(--text-primary)]">
               No blogs yet
             </h2>
 
-            <p className="text-(--text-secondary)">
+            <p className="text-[var(--text-secondary)]">
               Blogs will appear here once published.
             </p>
 
@@ -63,74 +62,67 @@ export default async function BlogPage() {
         ) : (
 
           <>
-          
-          {/* FEATURED BLOG */}
+            {/* ================= FEATURED ================= */}
+            {featured && (
+              <Link href={`/blogs/${featured.slug}`}>
+                <article className="mb-20 grid lg:grid-cols-2 gap-10 items-center group rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl p-6 md:p-8 transition hover:shadow-[var(--shadow-soft)]">
 
-          {featured && (
-            <Link href={`/blogs/${featured.slug}`}>
-              <article className="mb-20 grid lg:grid-cols-2 gap-10 items-center group">
+                  {/* IMAGE */}
+                  <div className="relative h-[220px] lg:h-[300px] rounded-xl overflow-hidden">
 
-                <div className="relative h-[200px] lg:h-[300px] rounded-2xl overflow-hidden">
+                    <Image
+                      src={featured.coverImage}
+                      alt={featured.title}
+                      fill
+                      className="object-cover transition duration-500 group-hover:scale-105"
+                    />
 
-                  <Image
-                    src={featured.coverImage}
-                    alt={featured.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition duration-500"
-                  />
+                  </div>
 
-                </div>
+                  {/* CONTENT */}
+                  <div>
 
-                <div>
+                    <p className="text-sm text-[var(--text-secondary)] mb-3">
+                      Featured Article
+                    </p>
 
-                  <p className="text-sm text-(--text-muted) mb-3">
-                    Latest Blog
-                  </p>
+                    <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-[var(--text-primary)] group-hover:text-[var(--color-primary)] transition">
+                      {featured.title}
+                    </h2>
 
-                  <h2 className="text-3xl lg:text-4xl font-bold mb-4 group-hover:underline">
-                    {featured.title}
-                  </h2>
+                    <p className="text-[var(--text-secondary)] mb-6 line-clamp-3">
+                      {featured.excerpt}
+                    </p>
 
-                  <p className="text-(--text-muted) mb-6 line-clamp-3">
-                    {featured.excerpt}
-                  </p>
+                    <span className="text-sm font-medium text-[var(--color-primary)]">
+                      Read article →
+                    </span>
 
-                  <span className="text-sm font-medium">
-                    Read Blog →
-                  </span>
+                  </div>
 
-                </div>
+                </article>
+              </Link>
+            )}
 
-              </article>
-            </Link>
-          )}
+            {/* ================= GRID ================= */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
 
+              {rest.map((blog) => (
+                <BlogCard
+                  key={blog._id}
+                  blog={{
+                    ...blog,
+                    slug: blog.slug,
+                  }}
+                />
+              ))}
 
-          {/* BLOG GRID */}
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-
-            {rest.map((blog) => (
-
-              <BlogCard
-                key={blog._id}
-                blog={{
-                  ...blog,
-                  slug: blog.slug
-                }}
-              />
-
-            ))}
-
-          </div>
-
+            </div>
           </>
-
         )}
 
       </section>
 
     </main>
-
   );
 }

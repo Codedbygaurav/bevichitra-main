@@ -1,148 +1,151 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Camera, Play, X } from "lucide-react";
-import { projectVideos } from "@/data/projectVideos";
-import { projectImages } from "@/data/projectImages";
 import Image from "next/image";
-export default function ProjectData() {
-  const [view, setView] = useState("photos");
-  const [playingVideo, setPlayingVideo] = useState(null);
+import { Play, X, Image as ImageIcon, Video } from "lucide-react";
+import SectionHeader from "@/components/ui/SectionHeader";
+import { projectImages } from "@/data/projectImages";
+import { projectVideos } from "@/data/projectVideos";
 
+export default function ProjectData() {
+  const [filter, setFilter] = useState("image");
+  const [playingVideo, setPlayingVideo] = useState(null);
   const router = useRouter();
 
-  const playerRef = useRef({});
+  /* ================= MERGE ================= */
+  const allProjects = [
+    ...projectImages.map((p) => ({ ...p, type: "image" })),
+    ...projectVideos.map((v) => ({ ...v, type: "video" })),
+  ];
+
+  const filtered = allProjects.filter((item) => item.type === filter);
 
   return (
-    <div className="min-h-screen bg-(--bg-main) text-(--text-primary) py-40 px-8">
-      {/* Header */}
-      <header className="max-w-6xl mx-auto mb-16">
-        <h1 className="text-5xl font-bold mb-4">Our Projects</h1>
-
-        <p className="max-w-2xl text-lg text-(--text-secondary)">
-          Selected works from our recent architectural and design projects.
-        </p>
+    <div className="min-h-screen py-28 px-4 md:px-6 section-bg">
+      {/* ================= HEADER ================= */}
+      <header className="max-w-5xl mx-auto mb-16">
+        <SectionHeader
+          label="Our Work"
+          title={["Work that drives", "real results"]}
+          description="A curated selection of projects focused on performance and clarity."
+          align="center"
+        />
       </header>
 
-      {/* Toggle */}
-      <div className="flex justify-center ">
-        <div className="flex bg-(--bg-secondary) border border-(--border-color) rounded-full p-2">
-          <button
-            onClick={() => setView("photos")}
-            className={`px-6 py-2 flex gap-2 items-center rounded-full ${
-              view === "photos" ? "bg-(--color-accent) text-white" : ""
-            }`}
-          >
-            <Camera size={18} /> Photos
-          </button>
+      {/* ================= FILTER ================= */}
+      <div className="flex justify-center mb-12">
+        <div className="flex rounded-full p-1 border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-md shadow-[var(--shadow-soft)]">
+          {["image", "video"].map((type) => {
+            const isActive = filter === type;
 
-          <button
-            onClick={() => setView("videos")}
-            className={`px-6 py-2 flex gap-2 items-center rounded-full ${
-              view === "videos" ? "bg-(--color-accent) text-white" : ""
-            }`}
-          >
-            <Play size={18} /> Videos
-          </button>
+            return (
+              <button
+                key={type}
+                onClick={() => setFilter(type)}
+                className={`flex items-center gap-2 px-5 py-2 text-sm rounded-full transition-all duration-300 ${
+                  isActive
+                    ? "bg-[var(--color-blue)] text-white shadow-[var(--shadow-soft)]"
+                    : "text-[var(--text-secondary)] "
+                }`}
+              >
+                {type === "image" ? (
+                  <>
+                    <ImageIcon size={16} />
+                    Images
+                  </>
+                ) : (
+                  <>
+                    <Video size={16} />
+                    Videos
+                  </>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="max-w-7xl  mx-auto mt-10">
-        {/* PROJECTS */}
-        {view === "photos" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projectImages.map((project) => (
-              <div
-                key={project.slug}
-                onClick={() => router.push(`/projects/${project.slug}`)}
-                className="group relative rounded-xl overflow-hidden cursor-pointer border border-(--border-color) transition hover:-translate-y-1 hover:shadow-xl "
-              >
-                <Image src={project.cover} alt={project.title} width={800} height={1200}/>
-
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-end p-5">
-                  <p className="text-white font-semibold">{project.title}</p>
+      {/* ================= GRID ================= */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {filtered.map((item, index) => (
+          <div
+            key={index}
+            className="group cursor-pointer transition"
+          >
+            {/* ================= CARD ================= */}
+            <div className="relative overflow-hidden rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] hover:border-[var(--color-blue)] transition-all duration-300">
+              {/* IMAGE */}
+              {item.type === "image" && (
+                <div
+                  onClick={() => router.push(`/projects/${item.slug}`)}
+                  className="relative"
+                >
+                  <Image
+                    src={item.cover}
+                    alt={item.title}
+                    width={800}
+                    height={1000}
+                    className="object-cover w-full h-full transition duration-500 group-hover:scale-105"
+                  />
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              )}
 
-        {/* VIDEOS */}
-        {view === "videos" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projectVideos.map((video) => (
-              <div
-                key={video.id}
-                className="relative aspect-video rounded-xl overflow-hidden border border-(--border-color)"
-              >
-                {/* Thumbnail */}
-                {playingVideo !== video.youtubeId && (
-                  <>
-                    <img
-                      src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
-                      className="w-full h-full object-cover"
-                    />
+              {/* VIDEO */}
+              {item.type === "video" && (
+                <div className="relative aspect-video">
+                  {playingVideo !== item.youtubeId ? (
+                    <>
+                      <img
+                        src={`https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg`}
+                        alt={item.title}
+                        className="w-full h-full object-cover"
+                      />
 
-                    <button
-                      onClick={() => setPlayingVideo(video.youtubeId)}
-                      className="absolute inset-0 flex items-center justify-center"
-                    >
-                      <div className="w-16 h-16 rounded-full bg-(--color-accent) flex items-center justify-center">
-                        <Play fill="white" size={24} />
-                      </div>
-                    </button>
-                  </>
-                )}
+                      <button
+                        onClick={() => setPlayingVideo(item.youtubeId)}
+                        className="absolute inset-0 flex items-center justify-center"
+                      >
+                        <div className="w-14 h-14 rounded-full bg-[var(--color-red)] flex items-center justify-center shadow-[var(--shadow-soft)]">
+                          <Play size={20} className="text-white" />
+                        </div>
+                      </button>
+                    </>
+                  ) : (
+                    <div className="absolute inset-0">
+                      <iframe
+                        className="w-full h-full"
+                        src={`https://www.youtube.com/embed/${item.youtubeId}?autoplay=1&rel=0`}
+                        allow="autoplay; encrypted-media"
+                        allowFullScreen
+                      />
 
-                {/* Video Player */}
-                {playingVideo === video.youtubeId && (
-                  <div className="absolute inset-0">
-                    <iframe
-                      className="w-full h-full"
-                      src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1`}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      onLoad={(e) => {
-                        const iframe = e.target;
-
-                        window.addEventListener("message", (event) => {
-                          try {
-                            const data = JSON.parse(event.data);
-                            if (
-                              data.event === "onStateChange" &&
-                              data.info === 0
-                            ) {
-                              setPlayingVideo(null); // reset card when video ends
-                            }
-                          } catch {}
-                        });
-
-                        iframe.contentWindow.postMessage(
-                          JSON.stringify({
-                            event: "listening",
-                            id: video.youtubeId,
-                          }),
-                          "*",
-                        );
-                      }}
-                    />
-
-                    <div className="absolute inset-0 pointer-events-none">
                       <button
                         onClick={() => setPlayingVideo(null)}
-                        className="absolute top-3 right-3 pointer-events-auto w-10 h-10 flex items-center justify-center bg-black/80 text-white rounded-full hover:bg-black transition"
+                        className="absolute top-3 right-3 w-9 h-9 flex items-center justify-center rounded-full bg-black/70 text-white"
                       >
-                        <X size={20} />
+                        <X size={18} />
                       </button>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* ================= TEXT ================= */}
+            <div className="mt-4 px-1">
+              <h3 className="text-[var(--text-primary)] font-medium transition group-hover:text-[var(--color-blue)]">
+                {item.title || "Project"}
+              </h3>
+
+              <p className="text-sm text-[var(--text-secondary)] transition group-hover:text-[var(--color-blue)]">
+                {item.type === "video"
+                  ? "Watch project →"
+                  : "View project →"}
+              </p>
+            </div>
           </div>
-        )}
+        ))}
       </div>
     </div>
   );

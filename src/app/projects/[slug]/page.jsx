@@ -3,9 +3,9 @@
 import { projectImages } from "@/data/projectImages";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import Masonry from "react-masonry-css";
 import { use } from "react";
 import Navbar from "@/components/layout/Navbar";
+import Button from "@/components/ui/Button";
 
 export default function ProjectPage({ params }) {
   const { slug } = use(params);
@@ -13,57 +13,121 @@ export default function ProjectPage({ params }) {
   const project = projectImages.find((p) => p.slug === slug);
   if (!project) return notFound();
 
-  const breakpoints = {
-    default: 5,
-    1536: 2,
-    1280: 2,
-    768: 2,
-    500: 1,
-  };
-
   return (
     <>
       <Navbar />
 
-      <div className="max-w-[1600px] mx-auto px-6 pt-32 pb-24">
-
-        {/* PROJECT INTRO */}
-        <div className="max-w-2xl mx-auto text-center mb-24">
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 pt-32 pb-24">
+        {/* ================= HERO ================= */}
+        <div className="mb-24">
+          <h1 className="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.05] text-[var(--text-primary)]">
             {project.title}
           </h1>
 
-          <p className="text-lg text-[var(--text-secondary)] leading-relaxed mb-10">
+          <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl leading-relaxed">
             {project.description}
           </p>
+
+          {/* HERO IMAGE */}
+          <div className="mt-12 rounded-2xl overflow-hidden border border-[var(--glass-border)] bg-[var(--glass-bg)] shadow-[var(--shadow-soft)]">
+            <Image
+              src={project.cover}
+              alt={project.title}
+              width={1200}
+              height={700}
+              className="w-full h-full object-cover transition duration-700 hover:scale-[1.02]"
+            />
+          </div>
         </div>
 
-        {/* MASONRY GRID */}
-        <Masonry
-          breakpointCols={breakpoints}
-          className="flex gap-6"
-          columnClassName="space-y-6"
-        >
+        {/* ================= OVERVIEW ================= */}
+        <div className="grid md:grid-cols-3 gap-6 mb-24">
+          {[
+            { label: "Client", value: project.client || "Confidential" },
+            {
+              label: "Services",
+              value: project.services || "Design, Development",
+            },
+            {
+              label: "Timeline",
+              value: project.timeline || "4–6 weeks",
+            },
+          ].map((item, i) => (
+            <div
+              key={i}
+              className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl p-6 shadow-[var(--shadow-soft)]"
+            >
+              <p className="text-sm text-[var(--color-blue)] mb-2 font-medium">
+                {item.label}
+              </p>
+              <p className="text-[var(--text-primary)] font-medium">
+                {item.value}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* ================= CONTENT ================= */}
+        <div className="space-y-20 max-w-3xl">
+          {/* PROBLEM */}
+          <div>
+            <h2 className="text-2xl font-semibold mb-4 text-[var(--text-primary)]">
+              The Challenge
+            </h2>
+
+            <p className="text-[var(--text-secondary)] leading-relaxed">
+              {project.problem ||
+                "The client needed a scalable and modern digital presence that could support growth while maintaining performance and clarity."}
+            </p>
+          </div>
+
+          {/* SOLUTION */}
+          <div>
+            <h2 className="text-2xl font-semibold mb-4 text-[var(--text-primary)]">
+              The Solution
+            </h2>
+
+            <p className="text-[var(--text-secondary)] leading-relaxed">
+              {project.solution ||
+                "We designed and developed a high-performance solution focused on usability, scalability, and visual clarity."}
+            </p>
+          </div>
+        </div>
+
+        {/* ================= GALLERY ================= */}
+        <div className="mt-24 grid grid-cols-1 md:grid-cols-2 gap-8">
           {project.images.map((img, i) => (
             <div
               key={i}
-              className="group relative overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+              className="rounded-xl overflow-hidden border border-[var(--glass-border)] shadow-[var(--shadow-soft)] group"
             >
               <Image
                 src={img}
-                alt={project.title}
+                alt={`${project.title} ${i + 1}`}
                 width={800}
-                height={1200}
-                placeholder="blur"
-                blurDataURL={img}
-                className="w-full h-auto object-cover transition duration-700 group-hover:scale-105"
+                height={1000}
+                className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
               />
-
-              
             </div>
           ))}
-        </Masonry>
+        </div>
 
+        {/* ================= CTA ================= */}
+        <div className="mt-28 text-center">
+          <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl p-10 md:p-14 shadow-[var(--shadow-soft)]">
+            <h3 className="text-2xl md:text-3xl font-semibold mb-4 text-[var(--text-primary)]">
+              Have a similar project in mind?
+            </h3>
+
+            <p className="text-[var(--text-secondary)] mb-6">
+              Let’s build something impactful together.
+            </p>
+
+            <Button variant="warm">
+              Start your project
+            </Button>
+          </div>
+        </div>
       </div>
     </>
   );

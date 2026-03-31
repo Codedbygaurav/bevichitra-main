@@ -9,21 +9,16 @@ async function getBlog(slug) {
   const client = await clientPromise;
   const db = client.db("blogDB");
 
-  const blog = await db.collection("blogs").findOne({
-    slug,
-  });
-
-  return blog;
+  return db.collection("blogs").findOne({ slug });
 }
 
 export default async function BlogPost({ params }) {
   const { slug } = await params;
-
   const blog = await getBlog(slug);
 
   if (!blog) {
     return (
-      <div className="p-20 text-center text-[var(--text-muted)] flex justify-center items-center">
+      <div className="p-20 text-center text-[var(--text-secondary)]">
         Blog not found
       </div>
     );
@@ -32,7 +27,6 @@ export default async function BlogPost({ params }) {
   const author = authors[blog.author];
 
   const headings = [];
-
   blog.content?.forEach((block, index) => {
     if (block.type === "section") {
       block.content?.forEach((item, i) => {
@@ -47,27 +41,26 @@ export default async function BlogPost({ params }) {
   });
 
   return (
-    <main className="max-w-[1100px] mx-auto px-6 pt-36 pb-24">
+    <main className="max-w-[1100px] mx-auto px-4 md:px-6 pt-36 pb-24">
       <ReadingProgress />
 
-      {/* HERO HEADER */}
-
-      <header className="max-w-5xl space-y-5">
-        <span className="inline-block text-xs font-semibold tracking-wider uppercase text-[var(--color-primary)] bg-[var(--bg-secondary)] px-3 py-1 rounded-full">
+      {/* ================= HERO ================= */}
+      <header className="max-w-3xl space-y-5">
+        <span className="inline-flex px-3 py-1 text-xs rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-md text-[var(--color-blue)]">
           {blog.category}
         </span>
 
-        <h1 className="text-3xl md:text-4xl font-bold leading-tight text-[var(--text-primary)]">
+        <h1 className="text-3xl md:text-5xl font-semibold leading-[1.1] text-[var(--text-primary)]">
           {blog.title}
         </h1>
 
-        <div className="flex items-center gap-3 text-sm text-[var(--text-muted)]">
-          <div className="relative w-9 h-9">
+        <div className="flex items-center gap-3 text-sm text-[var(--text-secondary)]">
+          <div className="relative w-9 h-9 rounded-full overflow-hidden border border-[var(--border)]">
             <Image
               src={author.avatar}
               alt={author.name}
               fill
-              className="rounded-full object-cover shadow-lg"
+              className="object-cover"
             />
           </div>
 
@@ -77,7 +70,9 @@ export default async function BlogPost({ params }) {
 
           <span>•</span>
 
-          <span>{new Date(blog.publishedAt).toLocaleDateString()}</span>
+          <span>
+            {new Date(blog.publishedAt).toLocaleDateString()}
+          </span>
 
           <span>•</span>
 
@@ -85,35 +80,27 @@ export default async function BlogPost({ params }) {
         </div>
       </header>
 
-      {/* HERO IMAGE */}
-
-      <div className="relative h-[300px] md:h-[360px] mt-10 rounded-2xl overflow-hidden border border-[var(--border-color)]">
+      {/* ================= HERO IMAGE ================= */}
+      <div className="relative h-[300px] md:h-[420px] mt-12 rounded-2xl overflow-hidden border border-[var(--glass-border)] shadow-[var(--shadow-soft)]">
         <Image
           src={blog.coverImage}
           alt={blog.title}
           fill
-          className="object-cover transition-transform duration-700 hover:scale-105"
+          className="object-cover transition duration-700 hover:scale-105"
         />
       </div>
 
-      {/* MOBILE TABLE OF CONTENTS */}
-
+      {/* ================= MOBILE TOC ================= */}
       {headings.length > 0 && (
-        <div className="lg:hidden mt-10 border border-[var(--border-color)] rounded-xl bg-[var(--bg-main)] shadow-lg p-6">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-[var(--text-muted)] mb-4">
-            Contents
-          </h3>
-
+        <div className="lg:hidden mt-10">
           <TableOfContents headings={headings} />
         </div>
       )}
 
-      {/* CONTENT GRID */}
-
+      {/* ================= CONTENT ================= */}
       <div className="grid lg:grid-cols-[minmax(0,720px)_260px] gap-20 mt-16">
         {/* ARTICLE */}
-
-        <article className="text-[17px] leading-7">
+        <article className="text-[17px] leading-7 space-y-6">
           {blog.content.map((block, index) => {
             if (block.type === "section") {
               return (
@@ -124,21 +111,10 @@ export default async function BlogPost({ params }) {
                         <h2
                           key={i}
                           id={`section-${index}-${i}`}
-                          className="text-2xl font-semibold text-[var(--text-primary)] mt-14 mb-4 scroll-mt-32"
+                          className="text-2xl font-semibold text-[var(--text-primary)] mt-14 scroll-mt-32"
                         >
                           {item.text}
                         </h2>
-                      );
-                    }
-
-                    if (item.type === "paragraph") {
-                      return (
-                        <p
-                          key={i}
-                          className="mb-4 text-[var(--text-secondary)] text-justify"
-                        >
-                          {item.text}
-                        </p>
                       );
                     }
 
@@ -146,10 +122,21 @@ export default async function BlogPost({ params }) {
                       return (
                         <h3
                           key={i}
-                          className="text-xl font-semibold mt-10 mb-3 text-[var(--text-primary)]"
+                          className="text-xl font-semibold mt-10 text-[var(--text-primary)]"
                         >
                           {item.text}
                         </h3>
+                      );
+                    }
+
+                    if (item.type === "paragraph") {
+                      return (
+                        <p
+                          key={i}
+                          className="text-[var(--text-secondary)] leading-relaxed"
+                        >
+                          {item.text}
+                        </p>
                       );
                     }
 
@@ -157,7 +144,7 @@ export default async function BlogPost({ params }) {
                       return (
                         <ul
                           key={i}
-                          className="list-disc pl-6 space-y-1.5 mb-5 text-[var(--text-secondary)]"
+                          className="list-disc pl-6 space-y-2 text-[var(--text-secondary)]"
                         >
                           {item.items.map((point, j) => (
                             <li key={j}>{point}</li>
@@ -165,6 +152,8 @@ export default async function BlogPost({ params }) {
                         </ul>
                       );
                     }
+
+                    return null;
                   })}
                 </section>
               );
@@ -174,7 +163,8 @@ export default async function BlogPost({ params }) {
               return (
                 <blockquote
                   key={index}
-                  className="border-l-4 border-[var(--color-primary)] pl-5 italic text-[var(--text-secondary)] my-10 text-justify" >
+                  className="border-l-4 border-[var(--color-blue)] pl-5 italic text-[var(--text-secondary)] my-10"
+                >
                   {block.text}
                 </blockquote>
               );
@@ -182,34 +172,36 @@ export default async function BlogPost({ params }) {
 
             if (block.type === "image") {
               return (
-                <img
+                <div
                   key={index}
-                  src={block.url}
-                  alt={block.alt}
-                  className="rounded-xl border border-[var(--border-color)] my-10"
-                />
+                  className="rounded-xl overflow-hidden border border-[var(--glass-border)] my-10 shadow-[var(--shadow-soft)]"
+                >
+                  <Image
+                    src={block.url}
+                    alt={block.alt}
+                    width={800}
+                    height={500}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               );
             }
+
+            return null;
           })}
         </article>
 
-        {/* SIDEBAR */}
-
+        {/* ================= SIDEBAR ================= */}
         <aside className="hidden lg:block">
-          <div className="sticky top-28 bg-[var(--bg-main)] shadow-lg border border-[var(--border-color)] rounded-xl py-6 px-8 ">
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-[var(--text-muted)] mb-4">
-              Contents
-            </h3>
-
+          <div className="sticky top-28">
             <TableOfContents headings={headings} />
           </div>
         </aside>
       </div>
 
-      {/* TAGS */}
-
-      <div className="max-w-3xl mt-20 border-t border-[var(--border-color)] pt-8">
-        <h3 className="text-xs uppercase tracking-wide text-[var(--text-muted)] mb-4">
+      {/* ================= TAGS ================= */}
+      <div className="max-w-3xl mt-20 pt-8 border-t border-[var(--border)]">
+        <h3 className="text-xs uppercase tracking-wide text-[var(--text-secondary)] mb-4">
           Tags
         </h3>
 
@@ -217,7 +209,7 @@ export default async function BlogPost({ params }) {
           {blog.tags.map((tag) => (
             <span
               key={tag}
-              className="px-3 py-1 text-sm bg-[var(--bg-secondary)] rounded-full border border-[var(--border-color)]"
+              className="px-3 py-1 text-sm rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-md text-[var(--text-secondary)]"
             >
               {tag}
             </span>

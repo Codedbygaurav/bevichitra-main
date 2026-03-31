@@ -39,10 +39,12 @@ export const projectImages = [
     title: "hello new",
     description:
       "A contemporary villa designed with minimal aesthetics, natural lighting, and seamless indoor-outdoor transitions.",
-    client: "Private Client",
-    year: "2024",
-    location: "Dubai",
-    cover: "/images/demo.jpg",
+    client: "demo",
+    services: "-",
+    timeline: "-",
+    cover: "/images/demo.jpg", //banner image
+    challange:"", // only one
+    solution:"", // only one
     images: [
       "/images/demo.jpg",
       "/images/demo.jpg",
