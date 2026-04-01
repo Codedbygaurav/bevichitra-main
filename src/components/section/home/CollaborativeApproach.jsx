@@ -1,25 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { steps } from "@/data/process";
+import { steps } from "../../../data/process";
 import { motion } from "framer-motion";
-import SectionHeader from "@/components/ui/SectionHeader";
+import SectionHeader from "../../ui/SectionHeader";
 
 export default function CollaborativeApproach() {
   const [active, setActive] = useState(0);
 
   return (
     <section className="relative py-16 md:py-24" id="process">
-      {/* BACKGROUND DEPTH */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(40,108,181,0.03),transparent)]" />
-      </div>
+      
 
       <div className="max-w-5xl mx-auto px-4 md:px-6 text-center relative z-10">
         {/* HEADER */}
         <SectionHeader
           label="Our Process"
-          title={["How we turn ideas", "into real products"]}
+          title={"How we turn ideas into real products"}
           description="A structured, collaborative process designed to move fast without compromising quality."
         />
 
@@ -40,7 +37,7 @@ export default function CollaborativeApproach() {
                   <span
                     className={`text-xs mb-2 transition ${
                       isActive
-                        ? "text-[var(--color-red)]"
+                        ? "text-[var(--color-blue)]"
                         : isDone
                         ? "text-[var(--text-secondary)] opacity-70"
                         : "opacity-0"
@@ -56,7 +53,7 @@ export default function CollaborativeApproach() {
                     className={`w-10 h-10 sm:mb-5 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-300
                     ${
                       isActive
-                        ? "bg-[var(--color-red)] text-white shadow-[var(--shadow-soft)]"
+                        ? "bg-[var(--color-blue)] text-white shadow-[var(--shadow-soft)]"
                         : isDone
                         ? "bg-[rgba(40,108,181,0.15)] text-[var(--color-blue)]"
                         : "bg-[var(--glass-bg)] text-[var(--text-secondary)] border border-[var(--glass-border)] backdrop-blur-md"
@@ -107,8 +104,7 @@ export default function CollaborativeApproach() {
               overflow-hidden
             "
           >
-            {/* GRADIENT DEPTH */}
-            <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(40,108,181,0.05),transparent)] pointer-events-none" />
+            
 
             <div className="relative z-10">
               <h3 className="text-xl md:text-3xl font-semibold text-[var(--text-primary)]">

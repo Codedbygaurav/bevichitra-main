@@ -3,14 +3,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-import UserDetailsStep from "@/components/section/contact/UserDetailsStep";
-import CallDecision from "@/components/section/contact/CallDecision";
-import CalendlyModal from "@/components/section/contact/CanlendlyModal";
-import Success from "@/components/ui/Success";
-import Button from "@/components/ui/Button";
+import UserDetailsStep from "../contact/UserDetailsStep";
+import CallDecision from "../contact/CallDecision";
+import CalendlyModal from "../contact/CanlendlyModal";
+import Success from "../../ui/Success";
+import Button from "../../ui/Button";
 
-export default function ContactFlow() {
-  const [step, setStep] = useState(1);
+export default function ContactFlow({ step, setStep }) {
   const totalSteps = 5;
 
   const [open, setOpen] = useState(false);
@@ -24,6 +23,7 @@ export default function ContactFlow() {
     name: "",
     email: "",
     availability: "",
+    contactMethod: "",
   });
 
   const next = () => setStep((prev) => prev + 1);
@@ -150,7 +150,6 @@ export default function ContactFlow() {
                 <h3 className="text-xl font-semibold text-[var(--text-primary)]">
                   Tell us about your project
                 </h3>
-
                 <textarea
                   value={data.message}
                   onChange={(e) =>
@@ -160,8 +159,20 @@ export default function ContactFlow() {
                   placeholder="Describe your idea..."
                 />
 
+                {data.message.trim().length > 0 &&
+                  data.message.trim().length < 10 && (
+                    <p className="text-sm text-[var(--color-red)]">
+                      Please enter at least 10 characters
+                    </p>
+                  )}
+
                 <div className="flex justify-center">
-                  <Button variant="primary" onClick={next} className="w-full">
+                  <Button
+                    variant="primary"
+                    onClick={next}
+                    disabled={data.message.trim().length < 10}
+                    className="w-full"
+                  >
                     Continue
                   </Button>
                 </div>
@@ -176,8 +187,20 @@ export default function ContactFlow() {
             {/* STEP 4 */}
             {step === 4 && (
               <CallDecision
-                onCalendly={() => setOpen(true)}
-                onManual={() => setStep(5)}
+                onCalendly={() => {
+                  setData({
+                    ...data,
+                    contactMethod: "calendly",
+                  });
+                  setOpen(true);
+                }}
+                onManual={() => {
+                  setData({
+                    ...data,
+                    contactMethod: "manual",
+                  });
+                  setStep(5);
+                }}
               />
             )}
 

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { rateLimit } from "@/lib/rateLimit";
-import { sign } from "@/lib/auth";
+import { rateLimit } from "../../../../lib/rateLimit";
+import { sign } from "../../../../lib/auth";
 
 export async function POST(req) {
   const { username, password } = await req.json();

@@ -10,6 +10,7 @@ Instagram,
 Linkedin,
 Facebook,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
 return ( <footer className="mt-32"> <div className="max-w-7xl mx-auto px-4 md:px-6">
@@ -24,9 +25,15 @@ return ( <footer className="mt-32"> <div className="max-w-7xl mx-auto px-4 md:px
 
         {/* BRAND */}
         <div className="space-y-6">
-          <h2 className="text-2xl font-semibold tracking-tight text-[var(--text-primary)]">
-            BeVichitra
-          </h2>
+          <div className="flex items-center gap-1">
+                    <Image
+                      src="/images/logoIcon.png"
+                      alt="Logo"
+                      width={32}
+                      height={32}/>
+          
+                    <h2 style={{fontFamily: "var(--font-logo)"}} className="text-xl tracking-wider">vichitra</h2>
+                  </div>
 
           <p className="text-sm leading-relaxed text-[var(--text-secondary)] max-w-sm">
             Crafting modern digital products that help brands grow,
@@ -116,7 +123,7 @@ return ( <footer className="mt-32"> <div className="max-w-7xl mx-auto px-4 md:px
         <p>
           © {new Date().getFullYear()}{" "}
           <span className="text-[var(--text-primary)] font-medium">
-            BeVichitra
+            Bevichitra
           </span>
           . All rights reserved.
         </p>

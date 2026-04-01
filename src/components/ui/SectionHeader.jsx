@@ -7,41 +7,27 @@ export default function SectionHeader({
   align = "center",
   className = "",
 }) {
-  const isCenter = align === "center";
+  const desktopAlignment =
+    align === "center" ? "md:text-center md:mx-auto" : "md:text-left";
 
   return (
     <header
-      className={`max-w-3xl ${
-        isCenter ? "mx-auto text-center" : "text-left"
-      } ${className}`}
+      className={`max-w-3xl text-center ${desktopAlignment} ${className}`}
     >
-      {/* BADGE */}
-      {label && <MainBadge>{label}</MainBadge>}
+      {label && (
+        <div className="flex justify-center">
+          <MainBadge>{label}</MainBadge>
+        </div>
+      )}
 
-      {/* TITLE */}
-      <h2 className=" text-4xl md:text-5xl lg:text-6xl font-semibold leading-[1.15] tracking-tight">
-        {Array.isArray(title) ? (
-          <>
-            <span className="block text-[var(--text-primary)]">
-              {title[0]}
-            </span>
-
-            <span className="block gradient-text pb-2">
-              {title[1]}
-            </span>
-          </>
-        ) : (
-          <span className="text-[var(--text-primary)]">
-            {title}
-          </span>
-        )}
+      <h2 className="mt-4 text-4xl md:text-5xl font-semibold leading-[1.08] tracking-tight text-[var(--text-primary)]">
+        {title}
       </h2>
 
-      {/* DESCRIPTION */}
       {description && (
         <p
-          className={`mt-5 text-base md:text-lg text-[var(--text-secondary)] leading-relaxed max-w-2xl ${
-            isCenter ? "mx-auto" : ""
+          className={`mt-5 text-base md:text-lg text-[var(--text-secondary)] leading-relaxed max-w-2xl mx-auto ${
+            align === "left" ? "md:mx-0" : ""
           }`}
         >
           {description}

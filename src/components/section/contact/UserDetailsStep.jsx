@@ -1,7 +1,7 @@
 "use client";
 
-import Field from "@/components/ui/Field";
-import Button from "@/components/ui/Button";
+import Field from "../../ui/Field";
+import Button from "../../ui/Button";
 import { useState } from "react";
 
 export default function UserDetailsStep({ data, setData, next }) {

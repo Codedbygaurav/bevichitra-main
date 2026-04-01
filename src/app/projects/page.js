@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import ProjectData from "@/components/section/projects/ProjectData";
+import ProjectData from "../../components/section/projects/ProjectData";
 
 export default function ProjectsPage() {
 

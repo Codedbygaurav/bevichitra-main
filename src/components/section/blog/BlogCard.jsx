@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { authors } from "@/data/authors";
+import { authors } from "../../../data/authors";
 
 export default function BlogCard({ blog }) {
   const author = authors[blog.author];

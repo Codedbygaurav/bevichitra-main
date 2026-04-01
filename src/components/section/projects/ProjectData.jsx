@@ -4,9 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Play, X, Image as ImageIcon, Video } from "lucide-react";
-import SectionHeader from "@/components/ui/SectionHeader";
-import { projectImages } from "@/data/projectImages";
-import { projectVideos } from "@/data/projectVideos";
+import SectionHeader from "../../ui/SectionHeader";
+import { projectImages } from "../../../data/projectImages";
+import { projectVideos } from "../../../data/projectVideos";
 
 export default function ProjectData() {
   const [filter, setFilter] = useState("image");
@@ -27,7 +27,7 @@ export default function ProjectData() {
       <header className="max-w-5xl mx-auto mb-16">
         <SectionHeader
           label="Our Work"
-          title={["Work that drives", "real results"]}
+          title={"Work that drives real results"}
           description="A curated selection of projects focused on performance and clarity."
           align="center"
         />

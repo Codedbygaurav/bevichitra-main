@@ -2,8 +2,8 @@
 
 import ServiceText from "./ServiceText";
 import ServiceCardItem from "./ServiceCardItem";
-import { services } from "@/data/services";
-import Reveal from "@/components/ui/Reveal";
+import { services } from "../../../../data/services";
+import Reveal from "../../../ui/Reveal";
 
 export default function Services() {
 return ( 

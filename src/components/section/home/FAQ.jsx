@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import SectionHeader from "@/components/ui/SectionHeader";
-import { faqs } from "@/data/Faqs";
+import SectionHeader from "../../ui/SectionHeader";
+import { faqs } from "../../../data/Faqs";
 
 /* 🔥 STABLE + INDEX SAFE */
 function getRelatedFaqs(faqs, activeIndex, count) {
@@ -58,7 +58,7 @@ export default function FAQ() {
         <div className="mb-16">
           <SectionHeader
             label="Got Questions?"
-            title={["We've got", "answers"]}
+            title={"We've got answers"}
           />
         </div>
 
@@ -76,8 +76,7 @@ export default function FAQ() {
               overflow-hidden
             "
           >
-            {/* GRADIENT DEPTH */}
-            <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(40,108,181,0.05),transparent)] pointer-events-none" />
+            
 
             <div className="relative z-10">
               <h3 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">

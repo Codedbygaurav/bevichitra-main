@@ -1,23 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import ContactFlow from "@/components/section/contact/ContactFlow";
-import SectionHeader from "@/components/ui/SectionHeader";
+import ContactFlow from "../../components/section/contact/ContactFlow";
+import SectionHeader from "../../components/ui/SectionHeader";
+import MainBadge from "../../components/ui/MainBadge";
 
 export default function ContactClient() {
   const [step, setStep] = useState(1);
 
   return (
-    <section className="relative pt-30 sm: pt-36 pb-24 px-4 sm:px-6 section-bg">
-    
-
+    <section className="relative pt-30 sm: pt-36 pb-24 px-2 sm:px-6 ">
       <div className="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
         {/* LEFT */}
         <div className="space-y-6 ">
-          <SectionHeader
-            label="Contact Us"
-            title={["Let’s build something", "meaningful together"]}
-          />
+          <MainBadge>Contact Us</MainBadge>
+
+          <div >
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.08] tracking-tight">
+              <span className="block text-[var(--text-primary)] ">
+                Let’s build something
+              </span>
+
+              <span className="block gradient-text pb-2">
+                meaningful together
+              </span>
+            </h1>
+          </div>
 
           {/* PROGRESS */}
           <div className="flex gap-2 mt-6 ">
@@ -31,17 +39,15 @@ export default function ContactClient() {
                 }`}
                 style={{
                   background:
-                    step >= s
-                      ? "var(--gradient-brand)"
-                      : "var(--bg-secondary)",
+                    step >= s ? "var(--gradient-brand)" : "var(--bg-secondary)",
                 }}
               />
             ))}
           </div>
 
           <p className="text-[var(--text-secondary)] max-w-md leading-relaxed">
-            Clear process. Honest advice. Real execution.
-            No confusion, no wasted calls.
+            Clear process. Honest advice. Real execution. No confusion, no
+            wasted calls.
           </p>
         </div>
 
@@ -54,7 +60,7 @@ export default function ContactClient() {
         <div className="mb-10">
           <SectionHeader
             label="Before We Talk"
-            title={["Things you should", "know first"]}
+            title={"Things you should know first"}
           />
         </div>
 

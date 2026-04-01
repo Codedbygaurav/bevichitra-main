@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { projects } from "@/data/projects";
+import { projects } from "../../../../data/projects";
 import Image from "next/image";
-import Button from "@/components/ui/Button";
+import Button from "../../../ui/Button";
 
 export default function ProjectCards() {
   const [index, setIndex] = useState(0);

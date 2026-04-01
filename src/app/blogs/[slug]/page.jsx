@@ -1,8 +1,8 @@
-import ReadingProgress from "@/components/section/blog/ReadingProgress";
-import ShareButtons from "@/components/section/blog/ShareButtons";
-import TableOfContents from "@/components/section/blog/TableOfContents";
-import clientPromise from "@/lib/mongodb";
-import { authors } from "@/data/authors";
+import ReadingProgress from "../../../components/section/blog/ReadingProgress";
+import ShareButtons from "../../../components/section/blog/ShareButtons";
+import TableOfContents from "../../../components/section/blog/TableOfContents";
+import clientPromise from "../../../lib/mongodb";
+import { authors } from "../../../data/authors";
 import Image from "next/image";
 
 async function getBlog(slug) {

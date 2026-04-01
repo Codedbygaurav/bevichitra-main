@@ -1,16 +1,15 @@
 "use client";
 
 import ProjectCards from "./ProjectCards";
-import SectionHeader from "@/components/ui/SectionHeader";
-import Reveal from "@/components/ui/Reveal";
+import SectionHeader from "../../../ui/SectionHeader";
+import Reveal from "../../../ui/Reveal";
 
 export default function ShowProjectData() {
   return (
     <section className="relative py-20 md:py-32 overflow-hidden">
       {/* BACKGROUND LAYER */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* SOFT BASE TINT */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(40,108,181,0.03),transparent)]" />
+       
 
         {/* SOFT BRAND TINT */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[420px] h-[420px] bg-[radial-gradient(circle,rgba(246,188,35,0.08),transparent_70%)] opacity-60" />
@@ -22,7 +21,7 @@ export default function ShowProjectData() {
           <Reveal>
             <SectionHeader
               label="Featured Projects"
-              title={["Refined projects with", "purpose"]}
+              title={"Refined projects with purpose"}
             />
           </Reveal>
         </div>

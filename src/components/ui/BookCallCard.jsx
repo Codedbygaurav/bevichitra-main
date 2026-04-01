@@ -37,7 +37,7 @@ export default function BookCallCard() {
                 <span className="block text-[var(--text-primary)]">
                   Stop guessing.
                 </span>
-                <span className="block gradient-text">
+                <span className="block gradient-text pb-2">
                   Start building right.
                 </span>
               </h2>

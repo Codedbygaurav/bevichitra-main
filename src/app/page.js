@@ -1,16 +1,16 @@
 
-import Hero from "@/components/section/home/Hero";
+import Hero from "../components/section/home/Hero";
 import ShowProjectData from "../components/section/home/projects/ShowProjectData";
 import Services from "../components/section/home/services/Services";
 import CollaborativeApproach from "../components/section/home/CollaborativeApproach";
 import FAQ from "../components/section/home/FAQ";
-import Testimonial from "@/components/section/home/Testimonial";
-import BookCallCard from "@/components/ui/BookCallCard";
+import Testimonial from "../components/section/home/Testimonial";
+import BookCallCard from "../components/ui/BookCallCard";
 
 export const metadata = {
-  title: "Divichitra | Creative Digital Agency for Brand Identity & Web Design",
+  title: "Bivichitra | Creative Digital Agency for Brand Identity & Web Design",
   description:
-    "Divichitra helps brands build unique digital identities through websites, logos, themes, typography, and social presence. We design experiences that grow businesses.",
+    "Bivichitra helps brands build unique digital identities through websites, logos, themes, typography, and social presence. We design experiences that grow businesses.",
   keywords: [
     "digital agency",
     "web design agency",

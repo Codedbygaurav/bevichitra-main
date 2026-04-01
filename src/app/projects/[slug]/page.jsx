@@ -1,11 +1,10 @@
 "use client";
 
-import { projectImages } from "@/data/projectImages";
+import { projectImages } from "../../../data/projectImages";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { use } from "react";
-import Navbar from "@/components/layout/Navbar";
-import Button from "@/components/ui/Button";
+import Button from "../../../components/ui/Button";
 
 export default function ProjectPage({ params }) {
   const { slug } = use(params);
@@ -15,7 +14,6 @@ export default function ProjectPage({ params }) {
 
   return (
     <>
-      <Navbar />
 
       <div className="max-w-6xl mx-auto px-4 md:px-6 pt-32 pb-24">
         {/* ================= HERO ================= */}

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { testimonials } from "@/data/testimonial";
-import SectionHeader from "@/components/ui/SectionHeader";
+import { testimonials } from "../../../data/testimonial";
+import SectionHeader from "../../ui/SectionHeader";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Testimonial() {
@@ -20,17 +20,14 @@ export default function Testimonial() {
 
   return (
     <section className="relative py-24 md:py-32">
-      {/* SUBTLE DEPTH */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(40,108,181,0.02),transparent)]" />
-      </div>
+      
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
         {/* HEADER */}
         <div className="mb-16">
           <SectionHeader
             label="Testimonials"
-            title={["What clients", "say"]}
+            title={"What clients say"}
           />
         </div>
 

@@ -1,21 +1,32 @@
 "use client";
 
-import Button from "@/components/ui/Button";
-import Reveal from "@/components/ui/Reveal";
-import SectionHeader from "@/components/ui/SectionHeader";
+import Button from "../../../ui/Button";
+import Reveal from "../../../ui/Reveal";
+
+import MainBadge from "../../../ui/MainBadge";
 
 export default function ServiceText() {
   return (
-    <div className="flex flex-col gap-5 md:gap-6 max-w-full xl:max-w-md items-center xl:items-start text-center xl:text-left">
+    <div className="flex flex-col gap-5 md:gap-6 max-w-full xl:max-w-md items-center xl:items-start text-center xl:text-left pt-0 sm:pt-20">
       
       {/* HEADER */}
       <Reveal>
-        <SectionHeader
-          label="Services"
-          title={["We build brands", "that grow and scale"]}
-          description="From strategy to execution, we design, build, and optimize digital experiences that help brands stand out and grow faster."
-          align="left"
-        />
+        <MainBadge>
+Services
+</MainBadge>
+
+     
+      <div>
+        <h1 className="text-4xl sm:text-5xl lg:text-5xl font-semibold leading-[1.08] tracking-tight">
+          <span className="block text-[var(--text-primary)]">
+            We build brands 
+          </span>
+
+          <span className="block text-[var(--text-primary)] pb-2">
+            that grow and scale
+          </span>
+        </h1>
+      </div>
       </Reveal>
 
       {/* CTA - KEEP OUTSIDE REVEAL FOR NOW */}
