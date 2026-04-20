@@ -11,7 +11,7 @@ import { CSS } from "@dnd-kit/utilities";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { calculateReadingTime } from "@/lib/utils/readingTIme";
+import { calculateReadingTime } from "@/lib/utils/readingTIme"; 
 
 function SortableItem({ id, children }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -31,88 +31,47 @@ function SortableItem({ id, children }) {
 
 export default function EditBlogForm({ blog }) {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     title: blog.title || "",
     slug: blog.slug || "",
     excerpt: blog.excerpt || "",
     category: blog.category || "",
-    author: blog.author || "Gaurav",
+    author: blog.author || "rahul",
     tags: blog.tags ? blog.tags.join(", ") : "",
     coverImage: blog.coverImage || "",
   });
 
   const [content, setContent] = useState(blog.content || []);
 
-  const generateSlug = (text) => {
-    return text
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9\s-]/g, "")
-      .replace(/\s+/g, "-");
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "title") {
-      setForm({
-        ...form,
-        title: value,
-        slug: generateSlug(value),
-      });
-    } else {
-      setForm({
-        ...form,
-        [name]: value,
-      });
-    }
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
-
     if (!over) return;
 
     if (active.id !== over.id) {
-      setContent((items) => {
-        const oldIndex = active.id;
-        const newIndex = over.id;
-        return arrayMove(items, oldIndex, newIndex);
-      });
+      setContent((items) => arrayMove(items, active.id, over.id));
     }
   };
 
   const addBlock = (type) => {
     if (type === "section") {
-      setContent([
-        ...content,
-        {
-          type: "section",
-          content: [],
-        },
-      ]);
+      setContent([...content, { type: "section", content: [] }]);
     }
-
     if (type === "image") {
-      setContent([
-        ...content,
-        {
-          type: "image",
-          url: "",
-          alt: "",
-        },
-      ]);
+      setContent([...content, { type: "image", url: "", alt: "" }]);
     }
-
     if (type === "quote") {
-      setContent([
-        ...content,
-        {
-          type: "quote",
-          text: "",
-        },
-      ]);
+      setContent([...content, { type: "quote", text: "" }]);
     }
   };
 
@@ -123,39 +82,27 @@ export default function EditBlogForm({ blog }) {
   };
 
   const removeBlock = (index) => {
-    const updated = content.filter((_, i) => i !== index);
-    setContent(updated);
+    setContent(content.filter((_, i) => i !== index));
   };
 
   const addInnerBlock = (sectionIndex, type) => {
     const updated = [...content];
 
+    if (!updated[sectionIndex].content) {
+      updated[sectionIndex].content = [];
+    }
+
     if (type === "heading") {
-      updated[sectionIndex].content.push({
-        type: "heading",
-        text: "",
-      });
+      updated[sectionIndex].content.push({ type: "heading", text: "" });
     }
-
-    if (type === "paragraph") {
-      updated[sectionIndex].content.push({
-        type: "paragraph",
-        text: "",
-      });
-    }
-
     if (type === "subheading") {
-      updated[sectionIndex].content.push({
-        type: "subheading",
-        text: "",
-      });
+      updated[sectionIndex].content.push({ type: "subheading", text: "" });
     }
-
+    if (type === "paragraph") {
+      updated[sectionIndex].content.push({ type: "paragraph", text: "" });
+    }
     if (type === "bullet") {
-      updated[sectionIndex].content.push({
-        type: "bullet",
-        items: [""],
-      });
+      updated[sectionIndex].content.push({ type: "bullet", items: [""] });
     }
 
     setContent(updated);
@@ -163,58 +110,76 @@ export default function EditBlogForm({ blog }) {
 
   const removeInnerBlock = (sectionIndex, innerIndex) => {
     const updated = [...content];
-
     updated[sectionIndex].content = updated[sectionIndex].content.filter(
       (_, i) => i !== innerIndex
     );
-
     setContent(updated);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const readTime = calculateReadingTime(content);
 
-    await fetch(`/api/blogs/${blog._id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...form,
-        readTime,
-        tags: form.tags.split(",").map((t) => t.trim()),
-        content,
-      }),
-    });
+    if (!form.title || !form.slug) {
+      alert("Title and slug required");
+      return;
+    }
 
-    router.push("/admin");
+    if (content.length === 0) {
+      alert("Content cannot be empty");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const readTime = calculateReadingTime(content);
+
+      const res = await fetch(`/api/blogs/${blog._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...form,
+          readTime,
+          tags: form.tags
+            ? form.tags.split(",").map((t) => t.trim()).filter(Boolean)
+            : [],
+          content,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Update failed");
+
+      router.push("/admin");
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <main className="max-w-5xl mx-auto py-16 mt-20 px-6 space-y-10">
+    <main className="max-w-5xl mx-auto py-16 mt-20 px-6 space-y-10 bg-[var(--bg-main)] text-[var(--text-primary)]">
       <h1 className="text-4xl font-bold">Edit Blog</h1>
 
       <form onSubmit={handleSubmit} className="space-y-10">
 
-        {/* BLOG INFO */}
-        <div className="bg-white border rounded-xl p-6 shadow-sm space-y-5">
-          <h2 className="text-lg font-semibold">Blog Information</h2>
-
+        <div className="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-xl p-6 space-y-5">
           <input
             name="title"
             value={form.title}
             onChange={handleChange}
-            placeholder="Blog title"
-            className="w-full border border-gray-300 p-3 rounded-lg"
+            placeholder="Title"
+            className="w-full border border-[var(--border)] p-3 rounded-lg bg-transparent"
           />
 
           <input
-            name="slug"
             value={form.slug}
-            onChange={handleChange}
-            placeholder="Slug"
-            className="w-full border border-gray-300 p-3 rounded-lg"
+            readOnly
+            className="w-full border border-[var(--border)] p-3 rounded-lg bg-[var(--bg-secondary)]"
           />
 
           <textarea
@@ -222,46 +187,11 @@ export default function EditBlogForm({ blog }) {
             value={form.excerpt}
             onChange={handleChange}
             placeholder="Excerpt"
-            className="w-full border border-gray-300 p-3 rounded-lg"
+            className="w-full border border-[var(--border)] p-3 rounded-lg bg-transparent"
           />
         </div>
 
-        {/* META */}
-        <div className="bg-white border rounded-xl p-6 shadow-sm space-y-5">
-          <h2 className="text-lg font-semibold">Metadata</h2>
-
-          <div className="grid grid-cols-2 gap-4">
-            <input
-              name="category"
-              value={form.category}
-              onChange={handleChange}
-              placeholder="Category"
-              className="w-full border border-gray-300 p-3 rounded-lg"
-            />
-
-            <select
-              name="author"
-              value={form.author}
-              onChange={handleChange}
-              className="w-full border border-gray-300 p-3 rounded-lg"
-            >
-              <option value="Gaurav">Gaurav</option>
-              <option value="Rahul">Rahul</option>
-              <option value="Saurabh">Saurabh</option>
-            </select>
-          </div>
-
-          <input
-            name="tags"
-            value={form.tags}
-            onChange={handleChange}
-            placeholder="Tags (comma separated)"
-            className="w-full border border-gray-300 p-3 rounded-lg"
-          />
-        </div>
-
-        {/* CONTENT BUILDER */}
-        <div className="bg-white border rounded-xl p-6 shadow-sm space-y-6">
+        <div className="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-xl p-6 space-y-6">
           <h2 className="text-lg font-semibold">Content Builder</h2>
 
           <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -269,103 +199,85 @@ export default function EditBlogForm({ blog }) {
               items={content.map((_, i) => i)}
               strategy={verticalListSortingStrategy}
             >
-
               {content.map((block, index) => (
                 <SortableItem key={index} id={index}>
                   {({ attributes, listeners }) => (
-
-                    <div className="bg-gray-50 border rounded-xl p-5 space-y-4">
+                    <div className="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl p-5 space-y-4">
 
                       <div className="flex justify-between items-center">
-
-                        <div
-                          {...attributes}
-                          {...listeners}
-                          className="cursor-grab text-gray-400 hover:text-black"
-                        >
-                          ⋮⋮
-                        </div>
-
-                        <span className="text-xs uppercase text-gray-500 font-semibold">
-                          {block.type}
-                        </span>
-
+                        <div {...attributes} {...listeners} className="cursor-grab">⋮⋮</div>
+                        <span className="text-xs text-[var(--text-secondary)]">{block.type}</span>
                         <button
                           type="button"
                           onClick={() => removeBlock(index)}
-                          className="text-red-500 text-sm"
+                          className="text-[var(--color-red)]"
                         >
                           Delete
                         </button>
-
                       </div>
 
                       {block.type === "section" && (
-                        <div className="space-y-4">
+                        <div className="space-y-3">
 
-                          {block.content?.map((item, i) => (
-                            <div
-                              key={i}
-                              className="bg-white border rounded-lg p-4 space-y-2"
-                            >
+                          {(block.content || []).map((item, i) => (
+                            <div key={i} className="border border-[var(--border)] p-3 rounded">
 
                               {item.type === "heading" && (
                                 <input
-                                  value={item.text}
+                                  value={item.text || ""}
                                   placeholder="Heading"
                                   onChange={(e) => {
                                     const updated = [...content];
-                                    updated[index].content[i].text =
-                                      e.target.value;
+                                    updated[index].content[i].text = e.target.value;
                                     setContent(updated);
                                   }}
-                                  className="w-full border border-gray-300 p-3 rounded-lg text-lg font-bold"
-                                />
-                              )}
-
-                              {item.type === "paragraph" && (
-                                <textarea
-                                  value={item.text}
-                                  onChange={(e) => {
-                                    const updated = [...content];
-                                    updated[index].content[i].text =
-                                      e.target.value;
-                                    setContent(updated);
-                                  }}
-                                  className="w-full border border-gray-300 p-3 rounded-lg"
+                                  className="w-full border border-[var(--border)] p-2 font-bold bg-transparent"
                                 />
                               )}
 
                               {item.type === "subheading" && (
                                 <input
-                                  value={item.text}
+                                  value={item.text || ""}
+                                  placeholder="Subheading"
                                   onChange={(e) => {
                                     const updated = [...content];
-                                    updated[index].content[i].text =
-                                      e.target.value;
+                                    updated[index].content[i].text = e.target.value;
                                     setContent(updated);
                                   }}
-                                  className="w-full border border-gray-300 p-3 rounded-lg font-semibold"
+                                  className="w-full border border-[var(--border)] p-2 font-semibold bg-transparent"
+                                />
+                              )}
+
+                              {item.type === "paragraph" && (
+                                <textarea
+                                  value={item.text || ""}
+                                  placeholder="Paragraph"
+                                  onChange={(e) => {
+                                    const updated = [...content];
+                                    updated[index].content[i].text = e.target.value;
+                                    setContent(updated);
+                                  }}
+                                  className="w-full border border-[var(--border)] p-2 bg-transparent"
                                 />
                               )}
 
                               {item.type === "bullet" && (
                                 <textarea
-                                  value={item.items.join("\n")}
+                                  value={(item.items || []).join("\n")}
+                                  placeholder="One point per line"
                                   onChange={(e) => {
                                     const updated = [...content];
-                                    updated[index].content[i].items =
-                                      e.target.value.split("\n");
+                                    updated[index].content[i].items = e.target.value.split("\n");
                                     setContent(updated);
                                   }}
-                                  className="w-full border border-gray-300 p-3 rounded-lg"
+                                  className="w-full border border-[var(--border)] p-2 bg-transparent"
                                 />
                               )}
 
                               <button
                                 type="button"
                                 onClick={() => removeInnerBlock(index, i)}
-                                className="text-red-500 text-xs"
+                                className="text-[var(--color-red)] text-xs"
                               >
                                 Delete
                               </button>
@@ -373,141 +285,47 @@ export default function EditBlogForm({ blog }) {
                             </div>
                           ))}
 
-                          <div className="flex gap-3 flex-wrap">
-
-                            <button
-                              type="button"
-                              onClick={() => addInnerBlock(index, "heading")}
-                              className="px-3 py-1 border rounded-lg text-sm"
-                            >
-                              + Heading
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => addInnerBlock(index, "paragraph")}
-                              className="px-3 py-1 border rounded-lg text-sm"
-                            >
-                              + Paragraph
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => addInnerBlock(index, "subheading")}
-                              className="px-3 py-1 border rounded-lg text-sm"
-                            >
-                              + Subheading
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => addInnerBlock(index, "bullet")}
-                              className="px-3 py-1 border rounded-lg text-sm"
-                            >
-                              + Bullet
-                            </button>
-
+                          <div className="flex gap-2 flex-wrap">
+                            <button type="button" onClick={() => addInnerBlock(index, "heading")}>+ Heading</button>
+                            <button type="button" onClick={() => addInnerBlock(index, "subheading")}>+ Subheading</button>
+                            <button type="button" onClick={() => addInnerBlock(index, "paragraph")}>+ Paragraph</button>
+                            <button type="button" onClick={() => addInnerBlock(index, "bullet")}>+ Bullet</button>
                           </div>
 
                         </div>
                       )}
 
+                      {block.type === "image" && <input type="file" />}
+
                       {block.type === "quote" && (
                         <textarea
-                          value={block.text}
-                          onChange={(e) =>
-                            updateBlock(index, "text", e.target.value)
-                          }
-                          className="w-full border border-gray-300 p-3 rounded-lg italic"
+                          value={block.text || ""}
+                          onChange={(e) => updateBlock(index, "text", e.target.value)}
+                          className="w-full border border-[var(--border)] p-2 bg-transparent"
                         />
                       )}
 
-                      {block.type === "image" && (
-                        <div className="space-y-3">
-
-                          <input
-                            type="file"
-                            onChange={async (e) => {
-                              const file = e.target.files[0];
-
-                              const formData = new FormData();
-                              formData.append("file", file);
-
-                              const res = await fetch("/api/upload", {
-                                method: "POST",
-                                body: formData,
-                              });
-
-                              const data = await res.json();
-
-                              updateBlock(index, "url", data.url);
-                            }}
-                          />
-
-                          {block.url && (
-                            <img
-                              src={block.url}
-                              className="rounded-lg border max-h-60"
-                            />
-                          )}
-
-                          <input
-                            placeholder="Alt text"
-                            value={block.alt}
-                            onChange={(e) =>
-                              updateBlock(index, "alt", e.target.value)
-                            }
-                            className="w-full border border-gray-300 p-3 rounded-lg"
-                          />
-
-                        </div>
-                      )}
-
                     </div>
-
                   )}
                 </SortableItem>
               ))}
-
             </SortableContext>
           </DndContext>
 
-          <div className="flex gap-3 pt-4">
-            <button
-              type="button"
-              onClick={() => addBlock("section")}
-              className="px-4 py-2 border rounded-lg"
-            >
-              + Section
-            </button>
-
-            <button
-              type="button"
-              onClick={() => addBlock("image")}
-              className="px-4 py-2 border rounded-lg"
-            >
-              + Image
-            </button>
-
-            <button
-              type="button"
-              onClick={() => addBlock("quote")}
-              className="px-4 py-2 border rounded-lg"
-            >
-              + Quote
-            </button>
+          <div className="flex gap-3">
+            <button type="button" onClick={() => addBlock("section")}>+ Section</button>
+            <button type="button" onClick={() => addBlock("image")}>+ Image</button>
+            <button type="button" onClick={() => addBlock("quote")}>+ Quote</button>
           </div>
-
         </div>
 
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="px-8 py-3 bg-black text-white rounded-lg font-medium"
-          >
-            Update Blog
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-6 py-3 bg-[var(--color-primary)] text-white rounded-lg"
+        >
+          {loading ? "Updating..." : "Update Blog"}
+        </button>
 
       </form>
     </main>

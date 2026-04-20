@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* ================= ROOT (LIGHT THEME) ================= */
 :root {
@@ -44,6 +45,12 @@
   /* 🌑 SHADOW */
   --shadow-soft: 0 15px 50px rgba(0, 0, 0, 0.12);
   --shadow-hover: 0 18px 40px rgba(0, 0, 0, 0.16);
+
+   --font-logo: "wildborn", sans-serif;
+  --font-body: "fredokaLight",sans-serif;
+  --font-heading: "fredokaBold",sans-serif;
+  --font-ui: "fredokaRegular",sans-serif;
+  --font-default: var(--font-body);
 }
 
 /* ================= DARK THEME ================= */
@@ -69,6 +76,7 @@
 
   --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.4);
   --shadow-hover: 0 18px 50px rgba(0, 0, 0, 0.5);
+
 }
 
 /* ================= BASE ================= */
@@ -81,6 +89,8 @@ body {
 background: var(--bg-main);
 color: var(--text-primary);
 transition: background 0.3s ease, color 0.3s ease;
+font-family: var(--font-default);
+
 }
 
 /* ================= UTILITIES ================= */

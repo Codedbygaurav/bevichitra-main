@@ -5,63 +5,40 @@ export default function Button({
   ...props
 }) {
   const base =
-    "inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium transition-all duration-300 w-full lg:w-fit active:scale-[0.96] disabled:opacity-40 disabled:cursor-not-allowed hover:-translate-y-[2px]";
+    "relative inline-flex items-center justify-center px-4 py-2 rounded-xl font-medium w-full lg:w-fit overflow-hidden transition-all duration-200 active:scale-[0.96] disabled:opacity-40 disabled:cursor-not-allowed font-[var(--font-heading)]";
 
   const variants = {
     primary: `
       text-white
-      bg-[linear-gradient(135deg,var(--color-blue),var(--color-red))]
-      shadow-[var(--shadow-soft)]
-      hover:shadow-[var(--shadow-hover)]
-      hover:scale-[1.02]
+      bg-[var(--color-yellow)]
+      hover:bg-[#e6b800]
     `,
-
-    brand: `
-      text-white
-      bg-[linear-gradient(135deg,var(--color-blue),var(--color-yellow),var(--color-red))]
-      shadow-[var(--shadow-soft)]
-      hover:shadow-[var(--shadow-hover)]
-      hover:scale-[1.02]
-    `,
-
-    warm: `
-      text-white
-      bg-[linear-gradient(135deg,var(--color-yellow),var(--color-red))]
-      shadow-[var(--shadow-soft)]
-      hover:shadow-[var(--shadow-hover)]
-      hover:scale-[1.02]
-    `,
-
     secondary: `
-      text-[var(--text-primary)]
-      bg-[var(--bg-elevated)]
-      border border-[var(--border)]
-      backdrop-blur-md
-      hover:border-[var(--color-blue)]
-      hover:bg-[var(--bg-secondary)]
-      hover:shadow-[var(--shadow-soft)]
-    `,
+  text-[var(--text-primary)]
+  border border-[var(--glass-border)]
+  bg-[var(--bg-elevated)]
+  backdrop-blur-md
+  rounded-xl
 
-    ghost: `
-      text-[var(--text-primary)]
-      hover:bg-[var(--bg-elevated)]
-      hover:shadow-[var(--shadow-soft)]
-    `,
+  shadow-[0_4px_14px_rgba(0,0,0,0.08)]
 
-    danger: `
-      text-white
-      bg-[var(--color-red)]
-      shadow-[var(--shadow-soft)]
-      hover:shadow-[var(--shadow-hover)]
-      hover:scale-[1.02]
-    `,
+  hover:border-[var(--color-yellow)]
+  hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)]
+  hover:-translate-y-[1px]
+
+  transition-all duration-200
+`,
+ghost: `
+  text-[var(--text-primary)]
+  px-4 py-2
+  rounded-lg
+  hover:bg-[var(--bg-elevated)]
+  transition-all duration-200
+`,
   };
 
   return (
-    <button
-      className={`${base} ${variants[variant]} ${className}`}
-      {...props}
-    >
+    <button className={`${base} ${variants[variant]} ${className}`} {...props}>
       {children}
     </button>
   );

@@ -1,5 +1,3 @@
-"use client";
-
 import { motion } from "framer-motion";
 
 export default function CallDecision({ onCalendly, onManual }) {
@@ -13,7 +11,7 @@ export default function CallDecision({ onCalendly, onManual }) {
     <div className="space-y-6">
       {/* MAIN CARD */}
       <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl p-6 md:p-7 shadow-[var(--shadow-soft)]">
-        <h3 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] mb-2">
+        <h3 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] mb-2 font-[var(--font-heading)]">
           How would you like to proceed?
         </h3>
 
@@ -29,10 +27,10 @@ export default function CallDecision({ onCalendly, onManual }) {
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="font-semibold text-[var(--text-primary)]">
+                <p className="font-semibold text-[var(--text-primary)] font-[var(--font-heading)]">
                   Book a call
                 </p>
-                <p className="text-sm text-[var(--text-secondary)] mt-1">
+                <p className="text-sm text-[var(--text-secondary)] mt-1 ">
                   Pick a time that suits you instantly
                 </p>
               </div>
@@ -50,7 +48,7 @@ export default function CallDecision({ onCalendly, onManual }) {
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="font-semibold text-[var(--text-primary)]">
+                <p className="font-semibold text-[var(--text-primary)] font-[var(--font-heading)]">
                   Let us contact you
                 </p>
                 <p className="text-sm text-[var(--text-secondary)] mt-1">

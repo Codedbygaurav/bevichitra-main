@@ -1,21 +1,23 @@
 "use client";
 
-export default function DeleteBlogButton({ id }) {
-
+export default function DeleteBlogButton({ slug }) {
   const handleDelete = async () => {
-
     const confirmDelete = confirm("Delete this blog?");
     if (!confirmDelete) return;
 
-    await fetch("/api/blogs", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id }),
-    });
+    try {
+      const res = await fetch(`/api/blogs/${slug}`, {
+        method: "DELETE",
+      });
 
-    location.reload();
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Delete failed");
+
+      location.reload();
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   return (

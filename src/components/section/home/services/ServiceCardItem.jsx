@@ -1,4 +1,6 @@
-export default function ServiceCardItem({ service }) {
+import Image from "next/image";
+
+export default function ServiceCardItem({service}) {
   return (
     <div
       className="
@@ -38,7 +40,13 @@ export default function ServiceCardItem({ service }) {
             group-hover:shadow-[var(--shadow-soft)]
           "
         >
-          {service.icon ? service.icon : "✨"}
+          <Image
+            src={service.icon}
+            alt={service.title}
+            width={26}
+            height={26}
+            className={"dark:invert transition-all duration-300"}
+          />
         </div>
       </div>
 

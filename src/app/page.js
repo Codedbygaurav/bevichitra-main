@@ -1,5 +1,4 @@
-
-import Hero from "../components/section/home/HeroTemp";
+import Hero from "../components/section/home/Hero";
 import ShowProjectData from "../components/section/home/projects/ShowProjectData";
 import Services from "../components/section/home/services/Services";
 import CollaborativeApproach from "../components/section/home/CollaborativeApproach";
@@ -8,9 +7,9 @@ import Testimonial from "../components/section/home/Testimonial";
 import BookCallCard from "../components/ui/BookCallCard";
 
 export const metadata = {
-  title: "Bivichitra | Creative Digital Agency for Brand Identity & Web Design",
+  title: "Bevichitra | Creative Digital Agency for Brand Identity & Web Design",
   description:
-    "Bivichitra helps brands build unique digital identities through websites, logos, themes, typography, and social presence. We design experiences that grow businesses.",
+    "Bevichitra helps brands build unique digital identities through websites, logos, themes, typography, and social presence. We design experiences that grow businesses.",
   keywords: [
     "digital agency",
     "web design agency",
@@ -20,21 +19,21 @@ export const metadata = {
     "website development",
     "brand identity",
     "social media branding",
-    "Bivichitra",
+    "Bevichitra",
   ],
   metadataBase: new URL("https://bevichitra.com/"),
   openGraph: {
-    title: "Bivichitra | Creative Digital Agency",
+    title: "Bevichitra | Creative Digital Agency",
     description:
       "We help brands create websites, logos, themes, fonts, and digital presence that stand out.",
     url: "https://bevichitra.com/",
-    siteName: "Bivichitra",
+    siteName: "Bevichitra",
     images: [
       {
-        url: "/images/og-image.png",
+        url: "/images/logoIcon.webp",
         width: 1200,
         height: 630,
-        alt: "Bivichitra Digital Agency",
+        alt: "Bevichitra Digital Agency",
       },
     ],
     locale: "en_US",
@@ -42,10 +41,10 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bivichitra | Creative Digital Agency",
+    title: "Bevichitra | Creative Digital Agency",
     description:
       "Brand identity, websites, and digital experiences for modern brands.",
-    images: ["/images/og-image.png"],
+    images: ["/images/logoIcon.webp"],
   },
 };
 

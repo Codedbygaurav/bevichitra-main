@@ -1,23 +1,29 @@
-import ContactClient from "./ContactClient";
+"use client";
 
-export const metadata = {
-  title: "Contact Us | BeVichitra",
-  description:
-    "Start your project with BeVichitra. Book a call and get clear next steps.",
-  keywords: [
-    "BeVichitra contact",
-    "book consultation",
-    "branding agency",
-    "website development",
-    "UI UX services",
-  ],
-  openGraph: {
-    title: "Contact Us | BeVichitra",
-    description: "Let’s build something meaningful together.",
-    type: "website",
-  },
-};
+import { useState } from "react";
+import ContactFlow from "./ContactFlow";
+import PageHeroCard from "@/components/ui/PageHeroCard";
+import ContactFaq from "@/components/section/contact/ContactFaq";
 
-export default function ContactPage() {
-  return <ContactClient />;
+export default function ContactClient() {
+  const [step, setStep] = useState(1);
+
+  return (
+    <>
+    <PageHeroCard
+          image="/images/banner/contact.webp"
+          badge="Contact us"
+          title="Let’s make it Vichitra, start a conversation that actually matters"
+          description="Start with a message, leave with direction. This panda helps you think clearer, move smarter, and build with intent. Because the right conversation, at the right time, can turn uncertainty into confident, measurable action."
+        />
+    <section className="relative  sm: pt-10 pb-24 px-2 sm:px-6 ">
+      
+        <ContactFlow step={step} setStep={setStep} />
+
+      {/* FAQ BLOCK */}
+      <ContactFaq/>
+    </section>
+    </>
+    
+  );
 }

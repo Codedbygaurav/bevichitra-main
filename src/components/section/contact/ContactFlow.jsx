@@ -8,6 +8,8 @@ import CallDecision from "../contact/CallDecision";
 import CalendlyModal from "../contact/CanlendlyModal";
 import Success from "../../ui/Success";
 import Button from "../../ui/Button";
+import SectionHeader from "@/components/ui/SectionHeader";
+import Reveal from "@/components/ui/Reveal";
 
 export default function ContactFlow({ step, setStep }) {
   const totalSteps = 5;
@@ -54,7 +56,16 @@ export default function ContactFlow({ step, setStep }) {
 
   return (
     <>
-      <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl p-6 md:p-8 shadow-[var(--shadow-soft)]">
+    <Reveal>
+            <SectionHeader
+              align="center"
+              title="Which Helps us to know you better"
+              label={"process"}
+            />
+          </Reveal>
+      <Reveal>
+        <div className="flex justify-center w-full mt-10">
+        <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl p-6 md:p-8 shadow-[var(--shadow-soft)] max-w-4xl w-full ">
         {/* ================= TOP BAR ================= */}
         <div className="flex items-center justify-between mb-6">
           {step > 1 ? (
@@ -85,7 +96,7 @@ export default function ContactFlow({ step, setStep }) {
             {/* STEP 1 */}
             {step === 1 && (
               <div className="space-y-6">
-                <h3 className="text-xl font-semibold text-[var(--text-primary)]">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] font-[var(--font-heading)]">
                   What do you need?
                 </h3>
 
@@ -147,7 +158,7 @@ export default function ContactFlow({ step, setStep }) {
             {/* STEP 2 */}
             {step === 2 && (
               <div className="space-y-5">
-                <h3 className="text-xl font-semibold text-[var(--text-primary)]">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] font-[var(--font-heading)]">
                   Tell us about your project
                 </h3>
                 <textarea
@@ -207,7 +218,7 @@ export default function ContactFlow({ step, setStep }) {
             {/* STEP 5 */}
             {step === 5 && (
               <div className="space-y-5">
-                <h3 className="text-xl font-semibold text-[var(--text-primary)]">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] font-[var(--font-heading)]">
                   When are you available?
                 </h3>
 
@@ -236,6 +247,8 @@ export default function ContactFlow({ step, setStep }) {
           </motion.div>
         </AnimatePresence>
       </div>
+      </div>
+      </Reveal>
 
       <CalendlyModal open={open} setOpen={setOpen} />
       <Success success={success} />

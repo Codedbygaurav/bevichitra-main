@@ -4,6 +4,7 @@ import { useState } from "react";
 import { steps } from "../../../data/process";
 import { motion } from "framer-motion";
 import SectionHeader from "../../ui/SectionHeader";
+import Reveal from "@/components/ui/Reveal";
 
 export default function CollaborativeApproach() {
   const [active, setActive] = useState(0);
@@ -14,13 +15,17 @@ export default function CollaborativeApproach() {
 
       <div className="max-w-5xl mx-auto px-4 md:px-6 text-center relative z-10">
         {/* HEADER */}
+        <Reveal>
+
         <SectionHeader
           label="Our Process"
           title={"How we turn ideas into real products"}
           description="A structured, collaborative process designed to move fast without compromising quality."
         />
+        </Reveal>
 
         {/* ================= STEPS ================= */}
+        <Reveal>
         <div className="mt-14 flex items-center">
           {steps.map((step, index) => {
             const isActive = index === active;
@@ -84,6 +89,7 @@ export default function CollaborativeApproach() {
             );
           })}
         </div>
+        
 
         {/* ================= CONTENT ================= */}
         <motion.div
@@ -152,7 +158,7 @@ export default function CollaborativeApproach() {
               transition
             "
           >
-            ← Back
+            ←
           </button>
 
           <button
@@ -170,9 +176,10 @@ export default function CollaborativeApproach() {
               transition
             "
           >
-            Next →
+            →
           </button>
         </div>
+        </Reveal>
       </div>
     </section>
   );

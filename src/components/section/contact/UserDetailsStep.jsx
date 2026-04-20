@@ -35,7 +35,7 @@ export default function UserDetailsStep({ data, setData, next }) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-[var(--text-primary)]">
+      <h2 className="text-xl font-semibold text-[var(--text-primary)] font-[var(--font-heading)]">
         Your details
       </h2>
 

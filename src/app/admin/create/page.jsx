@@ -1,43 +1,21 @@
 "use client";
 
-import { DndContext, closestCenter } from "@dnd-kit/core";
-import {
-  SortableContext,
-  useSortable,
-  arrayMove,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { calculateReadingTime } from "@/lib/utils/readingTIme";
-
-function SortableItem({ id, children }) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  return (
-    <div ref={setNodeRef} style={style}>
-      {children({ attributes, listeners })}
-    </div>
-  );
-}
+import { calculateReadingTime } from "@/lib/utils/readingTIme.js";
 
 export default function CreateBlog() {
   const router = useRouter();
+
+  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const [form, setForm] = useState({
     title: "",
     slug: "",
     excerpt: "",
     category: "",
-    author: "Rahul",
+    author: "rahul",
     tags: "",
     coverImage: "",
   });
@@ -56,106 +34,28 @@ export default function CreateBlog() {
     const { name, value } = e.target;
 
     if (name === "title") {
-      setForm({
-        ...form,
+      setForm((prev) => ({
+        ...prev,
         title: value,
         slug: generateSlug(value),
-      });
+      }));
     } else {
-      setForm({
-        ...form,
+      setForm((prev) => ({
+        ...prev,
         [name]: value,
-      });
+      }));
     }
-  };
-
-  const handleDragEnd = (event) => {
-    const { active, over } = event;
-
-    if (!over) return;
-
-    if (active.id !== over.id) {
-      setContent((items) => {
-        const oldIndex = active.id;
-        const newIndex = over.id;
-
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-  };
-
-  const addInnerBlock = (sectionIndex, type) => {
-    const updated = [...content];
-
-    if (type === "heading") {
-      updated[sectionIndex].content.push({
-        type: "heading",
-        text: "",
-      });
-    }
-
-    if (type === "paragraph") {
-      updated[sectionIndex].content.push({
-        type: "paragraph",
-        text: "",
-      });
-    }
-
-    if (type === "subheading") {
-      updated[sectionIndex].content.push({
-        type: "subheading",
-        text: "",
-      });
-    }
-
-    if (type === "bullet") {
-      updated[sectionIndex].content.push({
-        type: "bullet",
-        items: [""],
-      });
-    }
-
-    setContent(updated);
-  };
-
-  const removeInnerBlock = (sectionIndex, innerIndex) => {
-    const updated = [...content];
-    updated[sectionIndex].content = updated[sectionIndex].content.filter(
-      (_, i) => i !== innerIndex,
-    );
-    setContent(updated);
   };
 
   const addBlock = (type) => {
     if (type === "section") {
-      setContent([
-        ...content,
-        {
-          type: "section",
-          content: [],
-        },
-      ]);
+      setContent([...content, { type: "section", content: [] }]);
     }
-
     if (type === "image") {
-      setContent([
-        ...content,
-        {
-          type: "image",
-          url: "",
-          alt: "",
-        },
-      ]);
+      setContent([...content, { type: "image", url: "", alt: "" }]);
     }
-
     if (type === "quote") {
-      setContent([
-        ...content,
-        {
-          type: "quote",
-          text: "",
-        },
-      ]);
+      setContent([...content, { type: "quote", text: "" }]);
     }
   };
 
@@ -166,54 +66,137 @@ export default function CreateBlog() {
   };
 
   const removeBlock = (index) => {
-    const updated = content.filter((_, i) => i !== index);
+    setContent(content.filter((_, i) => i !== index));
+  };
+
+  const addInnerBlock = (sectionIndex, type) => {
+    const updated = [...content];
+
+    if (!updated[sectionIndex].content) {
+      updated[sectionIndex].content = [];
+    }
+
+    if (type === "heading") {
+      updated[sectionIndex].content.push({ type: "heading", text: "" });
+    }
+    if (type === "subheading") {
+      updated[sectionIndex].content.push({ type: "subheading", text: "" });
+    }
+    if (type === "paragraph") {
+      updated[sectionIndex].content.push({ type: "paragraph", text: "" });
+    }
+    if (type === "bullet") {
+      updated[sectionIndex].content.push({ type: "bullet", items: [""] });
+    }
+
     setContent(updated);
+  };
+
+  const removeInnerBlock = (sectionIndex, innerIndex) => {
+    const updated = [...content];
+    updated[sectionIndex].content = updated[sectionIndex].content.filter(
+      (_, i) => i !== innerIndex
+    );
+    setContent(updated);
+  };
+
+  const handleUpload = async (file) => {
+    try {
+      setUploading(true);
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error();
+
+      setForm((prev) => ({
+        ...prev,
+        coverImage: data.url,
+      }));
+    } catch {
+      alert("Upload failed");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const readTime = calculateReadingTime(content);
 
-    await fetch("/api/blogs", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...form,
-        readTime,
-        coverImage: form.coverImage,
-        tags: form.tags.split(",").map((t) => t.trim()),
-        content,
-      }),
-    });
+    if (!form.title || !form.slug) {
+      alert("Title and slug required");
+      return;
+    }
 
-    router.push("/admin");
+    if (!form.coverImage) {
+      alert("Cover image required");
+      return;
+    }
+
+    if (content.length === 0) {
+      alert("Add at least one content block");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const readTime = calculateReadingTime(content);
+
+      const res = await fetch("/api/blogs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...form,
+          readTime,
+          tags: form.tags
+            ? form.tags.split(",").map((t) => t.trim()).filter(Boolean)
+            : [],
+          content,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Failed");
+
+      router.push("/admin");
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <main className="max-w-5xl mx-auto py-16 mt-20 px-6 space-y-10">
+    <main className="max-w-5xl mx-auto py-16 mt-20 px-6 space-y-10 bg-[var(--bg-main)] text-[var(--text-primary)]">
       <h1 className="text-4xl font-bold">Create Blog</h1>
 
       <form onSubmit={handleSubmit} className="space-y-10">
-        {/* BLOG INFO */}
-        <div className="bg-white border rounded-xl p-6 shadow-sm space-y-5">
-          <h2 className="text-lg font-semibold">Blog Information</h2>
 
+        {/* BLOG INFO */}
+        <div className="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-xl p-6 space-y-5">
           <input
             name="title"
-            placeholder="Blog title"
+            placeholder="Title"
             value={form.title}
             onChange={handleChange}
-            className="w-full border border-gray-300 p-3 rounded-lg"
+            className="w-full border border-[var(--border)] p-3 rounded-lg bg-transparent"
           />
 
           <input
-            name="slug"
-            placeholder="Slug"
             value={form.slug}
-            onChange={handleChange}
-            className="w-full border border-gray-300 p-3 rounded-lg"
+            readOnly
+            className="w-full border border-[var(--border)] p-3 rounded-lg bg-[var(--bg-secondary)]"
           />
 
           <textarea
@@ -221,309 +204,207 @@ export default function CreateBlog() {
             placeholder="Excerpt"
             value={form.excerpt}
             onChange={handleChange}
-            className="w-full border border-gray-300 p-3 rounded-lg"
+            className="w-full border border-[var(--border)] p-3 rounded-lg bg-transparent"
           />
         </div>
 
         {/* META */}
-        <div className="bg-white border rounded-xl p-6 shadow-sm space-y-5">
-          <h2 className="text-lg font-semibold">Metadata</h2>
-
+        <div className="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-xl p-6 space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <input
               name="category"
               placeholder="Category"
               value={form.category}
               onChange={handleChange}
-              className="w-full border border-gray-300 p-3 rounded-lg"
+              className="border border-[var(--border)] p-3 rounded-lg bg-transparent"
             />
 
             <select
               name="author"
               value={form.author}
               onChange={handleChange}
-              className="w-full border border-gray-300 p-3 rounded-lg"
+              className="border border-[var(--border)] p-3 rounded-lg bg-transparent"
             >
-              <option value="Gaurav">Gaurav</option>
-              <option value="Rahul">Rahul</option>
-              <option value="Saurabh">Saurabh</option>
+              <option value="gaurav">Gaurav</option>
+              <option value="rahul">Rahul</option>
+              <option value="saurabh">Saurabh</option>
             </select>
           </div>
 
           <input
             name="tags"
-            placeholder="Tags (comma separated)"
+            placeholder="Tags"
             value={form.tags}
             onChange={handleChange}
-            className="w-full border border-gray-300 p-3 rounded-lg"
+            className="w-full border border-[var(--border)] p-3 rounded-lg bg-transparent"
           />
         </div>
 
         {/* COVER IMAGE */}
-        <div className="bg-white border rounded-xl p-6 shadow-sm space-y-5">
-          <h2 className="text-lg font-semibold">Cover Image</h2>
+        <div className="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-xl p-6 space-y-4">
+          <input type="file" onChange={(e) => handleUpload(e.target.files[0])} />
 
-          <input
-            type="file"
-            onChange={async (e) => {
-              const file = e.target.files[0];
-
-              const formData = new FormData();
-              formData.append("file", file);
-
-              const res = await fetch("/api/upload", {
-                method: "POST",
-                body: formData,
-              });
-
-              const data = await res.json();
-
-              setForm({
-                ...form,
-                coverImage: data.url,
-              });
-            }}
-          />
+          {uploading && <p className="text-[var(--text-secondary)]">Uploading...</p>}
 
           {form.coverImage && (
-            <img src={form.coverImage} className="rounded-lg max-h-60 border" />
+            <img src={form.coverImage} className="max-h-60 rounded-lg" />
           )}
         </div>
 
         {/* CONTENT BUILDER */}
-        <div className="bg-white border rounded-xl p-6 shadow-sm space-y-6">
+        <div className="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-xl p-6 space-y-6">
           <h2 className="text-lg font-semibold">Content Builder</h2>
 
-          <DndContext
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={content.map((_, i) => i)}
-              strategy={verticalListSortingStrategy}
-            >
-              {content.map((block, index) => (
-                <SortableItem key={index} id={index}>
-                  {({ attributes, listeners }) => (
-                    <div className="bg-gray-50 border rounded-xl p-5 space-y-4">
-                      <div className="flex justify-between items-center">
-                        <div
-                          {...attributes}
-                          {...listeners}
-                          className="cursor-grab text-gray-400 hover:text-black select-none"
-                        >
-                          ⋮⋮
-                        </div>
+          {content.map((block, index) => (
+            <div key={index} className="border border-[var(--border)] p-4 rounded-lg space-y-3">
 
-                        <span className="text-xs uppercase text-gray-500 font-semibold">
-                          {block.type}
-                        </span>
+              <div className="flex justify-between">
+                <span>{block.type}</span>
+                <button
+                  type="button"
+                  onClick={() => removeBlock(index)}
+                  className="text-[var(--color-red)]"
+                >
+                  Delete
+                </button>
+              </div>
 
-                        <button
-                          type="button"
-                          onClick={() => removeBlock(index)}
-                          className="text-red-500 text-sm"
-                        >
-                          Delete
-                        </button>
-                      </div>
+              {block.type === "section" && (
+                <div className="space-y-4">
 
-                      {block.type === "section" && (
-                        <div className="space-y-4">
-                          {block.content?.map((item, i) => (
-                            <div
-                              key={i}
-                              className="bg-white border rounded-lg p-4 space-y-2"
-                            >
-                              {item.type === "heading" && (
-                                <input
-                                  value={item.text}
-                                  placeholder="Heading"
-                                  onChange={(e) => {
-                                    const updated = [...content];
-                                    updated[index].content[i].text =
-                                      e.target.value;
-                                    setContent(updated);
-                                  }}
-                                  className="w-full border border-gray-300 p-3 rounded-lg text-lg font-bold"
-                                />
-                              )}
+                  {(block.content || []).map((item, i) => (
+                    <div
+                      key={i}
+                      className="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg p-4 space-y-2"
+                    >
 
-                              {item.type === "paragraph" && (
-                                <textarea
-                                  value={item.text}
-                                  onChange={(e) => {
-                                    const updated = [...content];
-                                    updated[index].content[i].text =
-                                      e.target.value;
-                                    setContent(updated);
-                                  }}
-                                  className="w-full border border-gray-300 p-3 rounded-lg"
-                                />
-                              )}
-
-                              {item.type === "subheading" && (
-                                <input
-                                  value={item.text}
-                                  onChange={(e) => {
-                                    const updated = [...content];
-                                    updated[index].content[i].text =
-                                      e.target.value;
-                                    setContent(updated);
-                                  }}
-                                  className="w-full border border-gray-300 p-3 rounded-lg font-semibold"
-                                />
-                              )}
-
-                              {item.type === "bullet" && (
-                                <textarea
-                                  value={item.items.join("\n")}
-                                  onChange={(e) => {
-                                    const updated = [...content];
-                                    updated[index].content[i].items =
-                                      e.target.value.split("\n");
-                                    setContent(updated);
-                                  }}
-                                  className="w-full border border-gray-300 p-3 rounded-lg"
-                                />
-                              )}
-
-                              <button
-                                type="button"
-                                onClick={() => removeInnerBlock(index, i)}
-                                className="text-red-500 text-xs"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          ))}
-
-                          <div className="flex gap-3 flex-wrap">
-                            <button
-                              type="button"
-                              onClick={() => addInnerBlock(index, "heading")}
-                              className="px-3 py-1 border rounded-lg text-sm"
-                            >
-                              + Heading
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => addInnerBlock(index, "paragraph")}
-                              className="px-3 py-1 border rounded-lg text-sm"
-                            >
-                              + Paragraph
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => addInnerBlock(index, "subheading")}
-                              className="px-3 py-1 border rounded-lg text-sm"
-                            >
-                              + Subheading
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => addInnerBlock(index, "bullet")}
-                              className="px-3 py-1 border rounded-lg text-sm"
-                            >
-                              + Bullet
-                            </button>
-                          </div>
-                        </div>
-                      )}
-
-                      {block.type === "quote" && (
-                        <textarea
-                          value={block.text}
-                          onChange={(e) =>
-                            updateBlock(index, "text", e.target.value)
-                          }
-                          className="w-full border border-gray-300 p-3 rounded-lg italic"
+                      {item.type === "heading" && (
+                        <input
+                          value={item.text || ""}
+                          placeholder="Heading"
+                          onChange={(e) => {
+                            const updated = [...content];
+                            updated[index].content[i].text = e.target.value;
+                            setContent(updated);
+                          }}
+                          className="w-full border border-[var(--border)] p-3 rounded-lg font-bold bg-transparent"
                         />
                       )}
 
-                      {block.type === "image" && (
-                        <div className="space-y-3">
-                          <input
-                            type="file"
-                            onChange={async (e) => {
-                              const file = e.target.files[0];
-
-                              const formData = new FormData();
-                              formData.append("file", file);
-
-                              const res = await fetch("/api/upload", {
-                                method: "POST",
-                                body: formData,
-                              });
-
-                              const data = await res.json();
-
-                              updateBlock(index, "url", data.url);
-                            }}
-                          />
-
-                          {block.url && (
-                            <img
-                              src={block.url}
-                              className="rounded-lg border max-h-60"
-                            />
-                          )}
-
-                          <input
-                            placeholder="Alt text"
-                            value={block.alt}
-                            onChange={(e) =>
-                              updateBlock(index, "alt", e.target.value)
-                            }
-                            className="w-full border border-gray-300 p-3 rounded-lg"
-                          />
-                        </div>
+                      {item.type === "subheading" && (
+                        <input
+                          value={item.text || ""}
+                          placeholder="Subheading"
+                          onChange={(e) => {
+                            const updated = [...content];
+                            updated[index].content[i].text = e.target.value;
+                            setContent(updated);
+                          }}
+                          className="w-full border border-[var(--border)] p-3 rounded-lg font-semibold bg-transparent"
+                        />
                       )}
+
+                      {item.type === "paragraph" && (
+                        <textarea
+                          value={item.text || ""}
+                          placeholder="Paragraph"
+                          onChange={(e) => {
+                            const updated = [...content];
+                            updated[index].content[i].text = e.target.value;
+                            setContent(updated);
+                          }}
+                          className="w-full border border-[var(--border)] p-3 rounded-lg bg-transparent"
+                        />
+                      )}
+
+                      {item.type === "bullet" && (
+                        <textarea
+                          value={(item.items || []).join("\n")}
+                          placeholder="One point per line"
+                          onChange={(e) => {
+                            const updated = [...content];
+                            updated[index].content[i].items =
+                              e.target.value.split("\n");
+                            setContent(updated);
+                          }}
+                          className="w-full border border-[var(--border)] p-3 rounded-lg bg-transparent"
+                        />
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => removeInnerBlock(index, i)}
+                        className="text-[var(--color-red)] text-xs"
+                      >
+                        Delete
+                      </button>
+
                     </div>
-                  )}
-                </SortableItem>
-              ))}
-            </SortableContext>
-          </DndContext>
+                  ))}
 
-          <div className="flex gap-3 pt-4">
-            <button
-              type="button"
-              onClick={() => addBlock("section")}
-              className="px-4 py-2 border rounded-lg"
-            >
-              + Section
-            </button>
+                  <div className="flex gap-2 flex-wrap">
+                    <button type="button" onClick={() => addInnerBlock(index, "heading")}>+ Heading</button>
+                    <button type="button" onClick={() => addInnerBlock(index, "subheading")}>+ Subheading</button>
+                    <button type="button" onClick={() => addInnerBlock(index, "paragraph")}>+ Paragraph</button>
+                    <button type="button" onClick={() => addInnerBlock(index, "bullet")}>+ Bullet</button>
+                  </div>
 
-            <button
-              type="button"
-              onClick={() => addBlock("image")}
-              className="px-4 py-2 border rounded-lg"
-            >
-              + Image
-            </button>
+                </div>
+              )}
 
-            <button
-              type="button"
-              onClick={() => addBlock("quote")}
-              className="px-4 py-2 border rounded-lg"
-            >
-              + Quote
-            </button>
+              {block.type === "image" && (
+                <input
+                  type="file"
+                  onChange={async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    const formData = new FormData();
+                    formData.append("file", file);
+
+                    const res = await fetch("/api/upload", {
+                      method: "POST",
+                      body: formData,
+                    });
+
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                      alert("Upload failed");
+                      return;
+                    }
+
+                    updateBlock(index, "url", data.url);
+                  }}
+                />
+              )}
+
+              {block.type === "quote" && (
+                <textarea
+                  value={block.text || ""}
+                  onChange={(e) => updateBlock(index, "text", e.target.value)}
+                  className="w-full border border-[var(--border)] p-3 rounded-lg bg-transparent"
+                />
+              )}
+
+            </div>
+          ))}
+
+          <div className="flex gap-2">
+            <button type="button" onClick={() => addBlock("section")}>+ Section</button>
+            <button type="button" onClick={() => addBlock("image")}>+ Image</button>
+            <button type="button" onClick={() => addBlock("quote")}>+ Quote</button>
           </div>
         </div>
 
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="px-8 py-3 bg-black text-white rounded-lg font-medium"
-          >
-            Publish Blog
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={loading || uploading}
+          className="px-6 py-3 bg-[var(--color-primary)] text-white rounded-lg"
+        >
+          {loading ? "Publishing..." : "Publish"}
+        </button>
+
       </form>
     </main>
   );

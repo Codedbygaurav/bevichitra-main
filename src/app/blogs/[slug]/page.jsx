@@ -5,6 +5,39 @@ import clientPromise from "../../../lib/mongodb";
 import { authors } from "../../../data/authors";
 import Image from "next/image";
 
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const blog = await getBlog(slug);
+
+  if (!blog) {
+    return {
+      title: "Blog Not Found | BeVichitra",
+    };
+  }
+
+  return {
+    title: `${blog.title} | BeVichitra`,
+    description: blog.excerpt || "Read this blog on BeVichitra.",
+    keywords: blog.tags || [],
+    
+    openGraph: {
+      title: blog.title,
+      description: blog.excerpt || "",
+      images: blog.coverImage
+        ? [{ url: blog.coverImage }]
+        : [],
+      type: "article",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: blog.title,
+      description: blog.excerpt || "",
+      images: blog.coverImage ? [blog.coverImage] : [],
+    },
+  };
+}
+
 async function getBlog(slug) {
   const client = await clientPromise;
   const db = client.db("blogDB");
@@ -24,13 +57,18 @@ export default async function BlogPost({ params }) {
     );
   }
 
-  const author = authors[blog.author];
+  // ✅ Safe author fallback
+  const author = authors?.[blog.author] || {
+    name: "Unknown",
+    avatar: "/default.webp",
+  };
 
+  // ✅ Safe headings extraction
   const headings = [];
-  blog.content?.forEach((block, index) => {
-    if (block.type === "section") {
-      block.content?.forEach((item, i) => {
-        if (item.type === "heading") {
+  (blog.content || []).forEach((block, index) => {
+    if (block?.type === "section") {
+      (block.content || []).forEach((item, i) => {
+        if (item?.type === "heading") {
           headings.push({
             id: `section-${index}-${i}`,
             text: item.text,
@@ -47,21 +85,23 @@ export default async function BlogPost({ params }) {
       {/* ================= HERO ================= */}
       <header className="max-w-3xl space-y-5">
         <span className="inline-flex px-3 py-1 text-xs rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-md text-[var(--color-blue)]">
-          {blog.category}
+          {blog.category || "General"}
         </span>
 
         <h1 className="text-3xl md:text-5xl font-semibold leading-[1.1] text-[var(--text-primary)]">
-          {blog.title}
+          {blog.title || "Untitled"}
         </h1>
 
         <div className="flex items-center gap-3 text-sm text-[var(--text-secondary)]">
           <div className="relative w-9 h-9 rounded-full overflow-hidden border border-[var(--border)]">
-            <Image
-              src={author.avatar}
-              alt={author.name}
-              fill
-              className="object-cover"
-            />
+            {author.avatar && (
+              <Image
+                src={author.avatar}
+                alt={author.name}
+                fill
+                className="object-cover"
+              />
+            )}
           </div>
 
           <span className="font-medium text-[var(--text-primary)]">
@@ -71,24 +111,28 @@ export default async function BlogPost({ params }) {
           <span>•</span>
 
           <span>
-            {new Date(blog.publishedAt).toLocaleDateString()}
+            {blog.publishedAt
+              ? new Date(blog.publishedAt).toLocaleDateString()
+              : "No date"}
           </span>
 
           <span>•</span>
 
-          <span>{blog.readTime}</span>
+          <span>{blog.readTime || "N/A"}</span>
         </div>
       </header>
 
       {/* ================= HERO IMAGE ================= */}
-      <div className="relative h-[300px] md:h-[420px] mt-12 rounded-2xl overflow-hidden border border-[var(--glass-border)] shadow-[var(--shadow-soft)]">
-        <Image
-          src={blog.coverImage}
-          alt={blog.title}
-          fill
-          className="object-cover transition duration-700 hover:scale-105"
-        />
-      </div>
+      {blog.coverImage && (
+        <div className="relative h-[300px] md:h-[420px] mt-12 rounded-2xl overflow-hidden border border-[var(--glass-border)] shadow-[var(--shadow-soft)]">
+          <Image
+            src={blog.coverImage}
+            alt={blog.title || "Blog image"}
+            fill
+            className="object-cover transition duration-700 hover:scale-105"
+          />
+        </div>
+      )}
 
       {/* ================= MOBILE TOC ================= */}
       {headings.length > 0 && (
@@ -101,12 +145,12 @@ export default async function BlogPost({ params }) {
       <div className="grid lg:grid-cols-[minmax(0,720px)_260px] gap-20 mt-16">
         {/* ARTICLE */}
         <article className="text-[17px] leading-7 space-y-6">
-          {blog.content.map((block, index) => {
-            if (block.type === "section") {
+          {(blog.content || []).map((block, index) => {
+            if (block?.type === "section") {
               return (
                 <section key={index}>
-                  {block.content?.map((item, i) => {
-                    if (item.type === "heading") {
+                  {(block.content || []).map((item, i) => {
+                    if (item?.type === "heading") {
                       return (
                         <h2
                           key={i}
@@ -118,7 +162,7 @@ export default async function BlogPost({ params }) {
                       );
                     }
 
-                    if (item.type === "subheading") {
+                    if (item?.type === "subheading") {
                       return (
                         <h3
                           key={i}
@@ -129,7 +173,7 @@ export default async function BlogPost({ params }) {
                       );
                     }
 
-                    if (item.type === "paragraph") {
+                    if (item?.type === "paragraph") {
                       return (
                         <p
                           key={i}
@@ -140,13 +184,13 @@ export default async function BlogPost({ params }) {
                       );
                     }
 
-                    if (item.type === "bullet") {
+                    if (item?.type === "bullet") {
                       return (
                         <ul
                           key={i}
                           className="list-disc pl-6 space-y-2 text-[var(--text-secondary)]"
                         >
-                          {item.items.map((point, j) => (
+                          {(item.items || []).map((point, j) => (
                             <li key={j}>{point}</li>
                           ))}
                         </ul>
@@ -159,7 +203,7 @@ export default async function BlogPost({ params }) {
               );
             }
 
-            if (block.type === "quote") {
+            if (block?.type === "quote") {
               return (
                 <blockquote
                   key={index}
@@ -170,7 +214,7 @@ export default async function BlogPost({ params }) {
               );
             }
 
-            if (block.type === "image") {
+            if (block?.type === "image" && block.url) {
               return (
                 <div
                   key={index}
@@ -178,7 +222,7 @@ export default async function BlogPost({ params }) {
                 >
                   <Image
                     src={block.url}
-                    alt={block.alt}
+                    alt={block.alt || "Blog image"}
                     width={800}
                     height={500}
                     className="w-full h-full object-cover"
@@ -206,7 +250,7 @@ export default async function BlogPost({ params }) {
         </h3>
 
         <div className="flex flex-wrap gap-3">
-          {blog.tags.map((tag) => (
+          {(blog.tags || []).map((tag) => (
             <span
               key={tag}
               className="px-3 py-1 text-sm rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-md text-[var(--text-secondary)]"

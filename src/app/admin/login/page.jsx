@@ -18,7 +18,6 @@ export default function LoginPage() {
   const [locked, setLocked] = useState(false);
   const [timer, setTimer] = useState(0);
 
-  /* ================= TIMER ================= */
   useEffect(() => {
     if (timer <= 0) return;
 
@@ -33,9 +32,13 @@ export default function LoginPage() {
     if (timer === 0) setLocked(false);
   }, [timer]);
 
-  /* ================= LOGIN ================= */
   const handleLogin = async () => {
     if (locked) return;
+
+    if (!form.username || !form.password) {
+      setError("Username and password required");
+      return;
+    }
 
     document.activeElement?.blur();
 
@@ -65,6 +68,7 @@ export default function LoginPage() {
       }
 
       router.push("/admin");
+      router.refresh();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -75,7 +79,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 section-bg pt-24 pb-10">
       <div className="w-full max-w-md">
-        {/* HEADING */}
+
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-semibold text-[var(--text-primary)]">
             Welcome back
@@ -86,57 +90,51 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* CARD */}
         <div className="relative rounded-3xl border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl p-6 sm:p-8 shadow-[var(--shadow-soft)] overflow-hidden">
-          {/* SOFT GLOW */}
+
           <div className="absolute -top-10 -right-10 w-[120px] h-[120px] bg-[var(--color-blue)] blur-[90px] opacity-10 pointer-events-none" />
 
-          {/* LOGO */}
           <div className="flex justify-center mb-6 relative z-10">
             <Image
-              src="/images/logoIcon.png"
+              src="/images/logoIcon.webp"
               width={64}
               height={64}
               alt="logo"
             />
           </div>
 
-          {/* ERROR */}
           {error && (
             <p className="text-[var(--color-red)] text-sm text-center mb-4 relative z-10">
               {error}
             </p>
           )}
 
-          {/* FORM */}
           <div className="space-y-4 relative z-10">
-            {/* USERNAME */}
+
             <input
               type="text"
               placeholder="Username"
               value={form.username}
               onChange={(e) =>
-                setForm({ ...form, username: e.target.value })
+                setForm((prev) => ({ ...prev, username: e.target.value }))
               }
-              className="w-full px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--bg-main)] text-[var(--text-primary)] placeholder-[var(--text-secondary)] outline-none transition-all duration-300 focus:border-[var(--color-blue)] focus:shadow-[0_0_0_3px_rgba(40,108,181,0.12)]"
+              className="w-full px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--bg-main)] text-[var(--text-primary)] placeholder-[var(--text-secondary)] outline-none"
             />
 
-            {/* PASSWORD */}
             <input
               type="password"
               placeholder="Password"
               value={form.password}
               onChange={(e) =>
-                setForm({ ...form, password: e.target.value })
+                setForm((prev) => ({ ...prev, password: e.target.value }))
               }
-              className="w-full px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--bg-main)] text-[var(--text-primary)] placeholder-[var(--text-secondary)] outline-none transition-all duration-300 focus:border-[var(--color-blue)] focus:shadow-[0_0_0_3px_rgba(40,108,181,0.12)]"
+              className="w-full px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--bg-main)] text-[var(--text-primary)] placeholder-[var(--text-secondary)] outline-none"
             />
 
-            {/* BUTTON */}
             <button
               onClick={handleLogin}
               disabled={loading || locked}
-              className="w-full py-3 rounded-xl font-medium text-white transition-all duration-300 active:scale-[0.98] disabled:opacity-50 shadow-[0_10px_30px_rgba(40,108,181,0.2)] hover:shadow-[0_14px_36px_rgba(224,31,68,0.25)]"
+              className="w-full py-3 rounded-xl font-medium text-white disabled:opacity-50"
               style={{
                 background: "var(--gradient-cta)",
               }}
@@ -149,7 +147,6 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* FOOTER */}
           <p className="text-center text-[var(--text-secondary)] text-xs mt-6 relative z-10">
             Admin panel access
           </p>

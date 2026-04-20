@@ -25,7 +25,7 @@ export default function NotFound() {
         {/* LOGO */}
         <div className="mb-8">
           <Image
-            src="/images/logoIcon.png"
+            src="/images/logoIcon.webp"
             alt="BeVichitra"
             width={90}
             height={90}
@@ -62,7 +62,7 @@ export default function NotFound() {
           href="/"
           className="group mt-10 inline-flex items-center justify-center px-8 py-4 rounded-full text-white font-medium transition-all duration-300 hover:scale-105 active:scale-95 shadow-[var(--shadow-soft)]"
           style={{
-            background: "var(--gradient-cta)",
+            background: "var(--color-blue)",
           }}
         >
           Return to Home

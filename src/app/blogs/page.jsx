@@ -1,8 +1,27 @@
 import clientPromise from "../../lib/mongodb";
 import BlogCard from "../../components/section/blog/BlogCard";
-import SectionHeader from "../../components/ui/SectionHeader";
+import PageHeroCard from "@/components/ui/PageHeroCard";
 import Image from "next/image";
 import Link from "next/link";
+
+export const metadata = {
+  title: "Blogs | BeVichitra",
+  description:
+    "Actionable insights on branding, UI/UX, and digital growth for founders and creators.",
+  openGraph: {
+    title: "Blogs | BeVichitra",
+    description:
+      "We don’t just write blogs, we craft clarity for modern brands.",
+    url: "/blogs",
+    images: [
+      {
+        url: "/images/banner/Blog.webp",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+};
 
 async function getBlogs() {
 const client = await clientPromise;
@@ -23,19 +42,13 @@ const featured = blogs[0];
 const rest = blogs.slice(1);
 
 return (
-<main className="w-full section-bg">
-{/* ================= HERO ================= */}
-<section className="pt-40 pb-20">
-<div className="max-w-3xl mx-auto px-4 md:px-6">
-<SectionHeader
-label="Our Blog"
-title={"Insights that actually matter"}
-description="Ideas, strategies, and insights to help you build better digital products."
-align="center"
-/>
-</div>
-</section>
-
+<main className="w-full">
+  <PageHeroCard
+    image="/images/banner/Blog.webp"
+    badge="Our Blogs"
+    title="We don’t just write blogs, we craft clarity"
+    description="Built for founders who want more than information. We break down branding, strategy, and growth into actionable insights that drive real decisions. Because consuming content is easy, applying it creates impact."
+  />
   {/* ================= CONTENT ================= */}
   <section className="max-w-6xl mx-auto px-4 md:px-6 pb-24">
     {blogs.length === 0 ? (

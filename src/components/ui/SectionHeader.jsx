@@ -20,7 +20,7 @@ export default function SectionHeader({
         </div>
       )}
 
-      <h2 className="mt-4 text-4xl md:text-5xl font-semibold leading-[1.08] tracking-tight text-[var(--text-primary)]">
+      <h2 className="mt-4 text-4xl md:text-5xl font-semibold leading-[1.08] tracking-tight text-[var(--text-primary)] font-[var(--font-heading)]">
         {title}
       </h2>
 

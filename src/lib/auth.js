@@ -1,8 +1,12 @@
 import crypto from "crypto";
 
-const SECRET = process.env.AUTH_SECRET || "supersecret";
+const SECRET = process.env.AUTH_SECRET;
 
-// create signature
+if (!SECRET) {
+  throw new Error("❌ AUTH_SECRET is required");
+}
+
+// ✅ create signature
 export function sign(value) {
   return crypto
     .createHmac("sha256", SECRET)
@@ -10,8 +14,12 @@ export function sign(value) {
     .digest("hex");
 }
 
-// verify signature
+// ✅ secure compare (prevents timing attacks)
 export function verify(value, signature) {
   const expected = sign(value);
-  return expected === signature;
+
+  return crypto.timingSafeEqual(
+    Buffer.from(expected),
+    Buffer.from(signature)
+  );
 }

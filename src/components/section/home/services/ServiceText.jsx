@@ -1,5 +1,3 @@
-"use client";
-
 import Button from "../../../ui/Button";
 import Reveal from "../../../ui/Reveal";
 
@@ -31,7 +29,7 @@ Services
 
       {/* CTA - KEEP OUTSIDE REVEAL FOR NOW */}
       <div className="mt-3 flex flex-col sm:flex-row items-center gap-4">
-        <Button variant="warm">
+        <Button variant="primary">
           Start a project
         </Button>
 

@@ -14,32 +14,35 @@ export default async function AdminPage() {
   const blogs = await getBlogs();
 
   return (
-    <main className="max-w-6xl mx-auto py-16 mt-20 px-6">
+    <main className="max-w-6xl mx-auto py-16 mt-20 px-6 bg-[var(--bg-main)] text-[var(--text-primary)]">
       {/* TOP BAR */}
       <div className="flex flex-col gap-4 mb-10 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
             Blog Dashboard
           </h1>
-          <p className="text-gray-500 mt-1 text-sm">
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
             Manage, edit and track your content
           </p>
         </div>
 
         <div className="flex items-center justify-between sm:justify-end gap-4">
-          <span className="text-sm text-gray-500">{blogs.length} blogs</span>
-
+          <span className="text-sm text-[var(--text-secondary)]">
+            {blogs.length} blogs
+          </span>
           <LogOut />
         </div>
       </div>
 
       {/* ACTION BAR */}
       <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:justify-between sm:items-center">
-        <h2 className="text-lg font-semibold text-gray-700">All Blogs</h2>
+        <h2 className="text-lg font-semibold text-[var(--text-secondary)]">
+          All Blogs
+        </h2>
 
         <Link
           href="/admin/create"
-          className="w-full sm:w-auto text-center px-5 py-2.5 bg-gradient-to-r from-black to-gray-800 text-white rounded-lg font-medium"
+          className="w-full sm:w-auto text-center px-5 py-2.5 bg-[var(--gradient-cta)] text-white rounded-lg font-medium"
         >
           + New Blog
         </Link>
@@ -47,15 +50,15 @@ export default async function AdminPage() {
 
       {/* EMPTY STATE */}
       {blogs.length === 0 && (
-        <div className="border rounded-2xl p-14 text-center bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm">
+        <div className="border border-[var(--border)] rounded-2xl p-14 text-center bg-[var(--bg-secondary)] shadow-[var(--shadow-soft)]">
           <h2 className="text-xl font-semibold mb-2">No blogs yet</h2>
-          <p className="text-gray-500 mb-6">
+          <p className="text-[var(--text-secondary)] mb-6">
             Start building your content empire 🚀
           </p>
 
           <Link
             href="/admin/create"
-            className="px-5 py-2.5 bg-black text-white rounded-lg"
+            className="px-5 py-2.5 bg-[var(--color-primary)] text-white rounded-lg"
           >
             Create Your First Blog
           </Link>
@@ -67,7 +70,7 @@ export default async function AdminPage() {
         {blogs.map((blog) => (
           <div
             key={blog._id}
-            className="border rounded-2xl p-5 bg-white shadow-sm space-y-4 sm:flex sm:items-center sm:justify-between sm:space-y-0 hover:shadow-md transition"
+            className="border border-[var(--border)] rounded-2xl p-5 bg-[var(--bg-elevated)] shadow-[var(--shadow-soft)] space-y-4 sm:flex sm:items-center sm:justify-between sm:space-y-0 hover:shadow-[var(--shadow-hover)] transition"
           >
             {/* CONTENT */}
             <div className="space-y-2">
@@ -75,8 +78,8 @@ export default async function AdminPage() {
                 {blog.title}
               </h2>
 
-              <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                <span className="px-2 py-0.5 bg-gray-100 rounded-full">
+              <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--text-secondary)]">
+                <span className="px-2 py-0.5 bg-[var(--bg-secondary)] rounded-full">
                   {blog.category}
                 </span>
 
@@ -85,15 +88,15 @@ export default async function AdminPage() {
             </div>
 
             {/* ACTIONS */}
-            <div className="flex items-center gap-6 pt-2 border-t sm:border-none sm:pt-0">
+            <div className="flex items-center gap-6 pt-2 border-t border-[var(--border)] sm:border-none sm:pt-0">
               <Link
                 href={`/admin/edit/${blog._id}`}
-                className="text-sm font-medium text-blue-600"
+                className="text-sm font-medium text-[var(--color-secondary)]"
               >
                 Edit
               </Link>
 
-              <DeleteBlogButton id={blog._id} />
+              <DeleteBlogButton slug={blog._id} />
             </div>
           </div>
         ))}

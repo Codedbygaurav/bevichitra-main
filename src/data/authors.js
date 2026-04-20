@@ -1,16 +1,16 @@
 export const authors = {
-  Gaurav: {
+  gaurav: {
     name: "Gaurav",
-    avatar: "/images/authors/gaurav.jpeg",
+    avatar: "/images/authors/gauravPfp.webp",
   },
 
-  Rahul: {
+  rahul: {
     name: "Rahul Prajapati",
-    avatar: "/images/authors/rahul.jpeg",
+    avatar: "/images/authors/rahulPfp.webp",
   },
 
-  Ayush: {
-    name: "Ayush",
-    avatar: "/images/authors/saurabh.jpeg",
+  saurabh: {
+    name: "Saurabh Pal",
+    avatar: "/images/authors/saurabhPfp.webp",
   },
 };

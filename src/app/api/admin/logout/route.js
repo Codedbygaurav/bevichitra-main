@@ -4,6 +4,17 @@ export async function POST() {
   const res = NextResponse.json({ success: true });
 
   res.cookies.set("admin-auth", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    expires: new Date(0),
+    path: "/",
+  });
+
+  res.cookies.set("admin-sign", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
     expires: new Date(0),
     path: "/",
   });

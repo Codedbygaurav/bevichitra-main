@@ -1,5 +1,3 @@
-"use client";
-
 import { Twitter, Linkedin } from "lucide-react";
 
 export default function ShareButtons() {

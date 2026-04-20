@@ -22,16 +22,7 @@ export default function ProjectData() {
   const filtered = allProjects.filter((item) => item.type === filter);
 
   return (
-    <div className="min-h-screen py-28 px-4 md:px-6 section-bg">
-      {/* ================= HEADER ================= */}
-      <header className="max-w-5xl mx-auto mb-16">
-        <SectionHeader
-          label="Our Work"
-          title={"Work that drives real results"}
-          description="A curated selection of projects focused on performance and clarity."
-          align="center"
-        />
-      </header>
+    <div className="min-h-screen py-10 px-4 md:px-6">
 
       {/* ================= FILTER ================= */}
       <div className="flex justify-center mb-12">
@@ -106,7 +97,7 @@ export default function ProjectData() {
                         onClick={() => setPlayingVideo(item.youtubeId)}
                         className="absolute inset-0 flex items-center justify-center"
                       >
-                        <div className="w-14 h-14 rounded-full bg-[var(--color-red)] flex items-center justify-center shadow-[var(--shadow-soft)]">
+                        <div className="w-14 h-14 rounded-full bg-[var(--color-blue)] flex items-center justify-center shadow-[var(--shadow-soft)]">
                           <Play size={20} className="text-white" />
                         </div>
                       </button>

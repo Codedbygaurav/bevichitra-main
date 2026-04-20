@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import SectionHeader from "../../ui/SectionHeader";
 import { faqs } from "../../../data/Faqs";
+import Reveal from "@/components/ui/Reveal";
 
 /* 🔥 STABLE + INDEX SAFE */
 function getRelatedFaqs(faqs, activeIndex, count) {
@@ -56,15 +57,19 @@ export default function FAQ() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center relative z-10">
         {/* HEADER */}
         <div className="mb-16">
+          <Reveal>
           <SectionHeader
             label="Got Questions?"
             title={"We've got answers"}
           />
+          </Reveal>
         </div>
 
         {/* MAIN */}
+        
         <div className="max-w-3xl mx-auto">
           {/* MAIN CARD */}
+          <Reveal>
           <div
             className="
               relative
@@ -123,8 +128,11 @@ export default function FAQ() {
               →
             </button>
           </div>
+          </Reveal>
+          
 
           {/* SUGGESTIONS */}
+         <Reveal>
           <div className="flex justify-center gap-3 mt-8 overflow-x-auto no-scrollbar px-1">
             {previewFaqs.map((faq) => (
               <button
@@ -148,8 +156,10 @@ export default function FAQ() {
               </button>
             ))}
           </div>
+          </Reveal>
         </div>
       </div>
+        
     </section>
   );
 }
