@@ -1,4 +1,5 @@
 import ReadingProgress from "../../../components/section/blog/ReadingProgress";
+import ShareButtons from "../../../components/section/blog/ShareButtons";
 import TableOfContents from "../../../components/section/blog/TableOfContents";
 import clientPromise from "../../../lib/mongodb";
 import { authors } from "../../../data/authors";
@@ -278,6 +279,8 @@ export default async function BlogPost({ params }) {
           ))}
         </div>
       </div>
+
+      <ShareButtons />
     </main>
   );
 }

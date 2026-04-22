@@ -24,6 +24,8 @@ export async function generateMetadata({ params }) {
 imagePath = imagePath.replace(".webp", ".jpg");
 
 const imageUrl = `${baseUrl}${imagePath}`;
+console.log(imageUrl)
+console.log(imagePath)
 
   return {
     title: `${project.title} | BeVichitra Projects`,
