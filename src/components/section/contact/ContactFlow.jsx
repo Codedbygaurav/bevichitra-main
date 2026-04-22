@@ -236,7 +236,7 @@ export default function ContactFlow({ step, setStep }) {
                             className={`p-4 rounded-xl border ${
                               selected
                                 ? "bg-[var(--text-primary)] text-[var(--bg-main)] border-[var(--text-primary)]"
-                                : "border-[var(--border)] text-[var(--text-secondary)]"
+                                : "border-[var(--border)] text-[var(--text-primary)]"
                             } ${
                               isLastSingle
                                 ? "col-span-2 mx-auto w-[60%]" // 👈 center it

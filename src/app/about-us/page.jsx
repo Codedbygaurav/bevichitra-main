@@ -30,7 +30,7 @@ export const metadata = {
     siteName: "BeVichitra",
     images: [
       {
-        url: "/images/banner/about.webp", // 🔁 add your OG image
+        url: "https://bevichitra.com/images/URLimages/about.jpg",
         width: 1200,
         height: 630,
         alt: "BeVichitra",
@@ -45,7 +45,7 @@ export const metadata = {
     title: "About BeVichitra",
     description:
       "A brand architecture studio helping businesses build strong identities and digital presence.",
-    images: ["/og-image.png"], // same OG
+    images: ["https://bevichitra.com/images/URLImages/about.jpg"],
   },
 
   robots: {

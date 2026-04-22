@@ -30,7 +30,7 @@ export const metadata = {
     siteName: "Bevichitra",
     images: [
       {
-        url: "/images/logoIcon.webp",
+        url: "https://bevichitra.com/images/Urlimages/LogoIcon.jpg",
         width: 1200,
         height: 630,
         alt: "Bevichitra Digital Agency",
@@ -44,7 +44,7 @@ export const metadata = {
     title: "Bevichitra | Creative Digital Agency",
     description:
       "Brand identity, websites, and digital experiences for modern brands.",
-    images: ["/images/logoIcon.webp"],
+    url: ["https://bevichitra.com/images/URLimages/logoIcon.jpg"],
   },
 };
 

@@ -47,7 +47,7 @@ export default async function AdminPage() {
 
         <Link
           href="/admin/create"
-          className="w-full sm:w-auto text-center px-5 py-2.5 bg-[var(--gradient-cta)] text-white rounded-lg font-medium"
+          className="w-full sm:w-auto text-center px-5 py-2.5 bg-[var(--gradient-cta)] text-[var(--text-primary)] rounded-lg font-medium"
         >
           + New Blog
         </Link>

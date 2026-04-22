@@ -4,6 +4,8 @@ import Image from "next/image";
 import Button from "../../../components/ui/Button";
 import Link from "next/link";
 
+const baseUrl = "https://bevichitra.com";
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
 
@@ -15,6 +17,14 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  // ✅ Ensure absolute + safe image
+  let imagePath = project.cover || "/images/URLimages/LogoIcon.jpg";
+
+// 🔥 convert .webp → .jpg for OG
+imagePath = imagePath.replace(".webp", ".jpg");
+
+const imageUrl = `${baseUrl}${imagePath}`;
+
   return {
     title: `${project.title} | BeVichitra Projects`,
     description: project.description,
@@ -22,7 +32,16 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: project.title,
       description: project.description,
-      images: project.banner ? [{ url: project.banner }] : [],
+      url: `${baseUrl}/our-work/${slug}`, // ✅ REQUIRED
+      siteName: "BeVichitra",
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: project.title,
+        },
+      ],
       type: "website",
     },
 
@@ -30,11 +49,11 @@ export async function generateMetadata({ params }) {
       card: "summary_large_image",
       title: project.title,
       description: project.description,
-      images: project.banner ? [project.banner] : [],
+      images: [imageUrl], // ✅ SAME IMAGE
     },
 
     alternates: {
-      canonical: `https://yourdomain.com/our-work/${slug}`,
+      canonical: `${baseUrl}/our-work/${slug}`, // ✅ FIXED
     },
   };
 }

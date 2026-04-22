@@ -6,18 +6,30 @@ export const metadata = {
   title: "Our Work | BeVichitra",
   description:
     "Explore branding, UI/UX, and web design projects built to deliver measurable results.",
+
   openGraph: {
     title: "Our Work | BeVichitra",
     description:
       "We design systems that convert attention into action.",
-    url: "/our-work",
+    url: "https://bevichitra.com/our-work", // ✅ absolute
+    siteName: "BeVichitra",
     images: [
       {
-        url: "/images/banner/OurWork.webp",
+        url: "https://bevichitra.com/images/URLimages/our-work.jpg", // ✅ absolute + JPG
         width: 1200,
         height: 630,
+        alt: "BeVichitra Portfolio",
       },
     ],
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Our Work | BeVichitra",
+    description:
+      "Explore branding, UI/UX, and web design projects.",
+    images: ["https://bevichitra.com/images/URLimages/our-work.jpg"], // ✅ same image
   },
 };
 

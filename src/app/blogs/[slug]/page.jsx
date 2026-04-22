@@ -9,22 +9,41 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const blog = await getBlog(slug);
 
+  const baseUrl = "https://bevichitra.com";
+
   if (!blog) {
     return {
       title: "Blog Not Found | BeVichitra",
     };
   }
 
+  const imageUrl = blog.coverImage?.startsWith("http")
+    ? blog.coverImage
+    : `${baseUrl}${blog.coverImage}`;
+
+  const url = `${baseUrl}/blogs/${slug}`;
+
   return {
     title: `${blog.title} | BeVichitra`,
     description: blog.excerpt || "Read this blog on BeVichitra.",
     keywords: blog.tags || [],
-    
+
+    alternates: {
+      canonical: url,
+    },
+
     openGraph: {
       title: blog.title,
       description: blog.excerpt || "",
-      images: blog.coverImage
-        ? [{ url: blog.coverImage }]
+      url,
+      images: imageUrl
+        ? [
+            {
+              url: imageUrl,
+              width: 1200,
+              height: 630,
+            },
+          ]
         : [],
       type: "article",
     },
@@ -33,7 +52,7 @@ export async function generateMetadata({ params }) {
       card: "summary_large_image",
       title: blog.title,
       description: blog.excerpt || "",
-      images: blog.coverImage ? [blog.coverImage] : [],
+      images: imageUrl ? [imageUrl] : [],
     },
   };
 }

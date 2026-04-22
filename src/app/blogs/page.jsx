@@ -8,18 +8,30 @@ export const metadata = {
   title: "Blogs | BeVichitra",
   description:
     "Actionable insights on branding, UI/UX, and digital growth for founders and creators.",
+
   openGraph: {
     title: "Blogs | BeVichitra",
     description:
       "We don’t just write blogs, we craft clarity for modern brands.",
-    url: "/blogs",
+    url: "https://bevichitra.com/blogs", // ✅ FULL URL
+    siteName: "BeVichitra",
     images: [
       {
-        url: "/images/banner/Blog.webp",
+        url: "https://bevichitra.com/images/URLimages/blog.jpg", // ✅ JPG + absolute
         width: 1200,
         height: 630,
+        alt: "BeVichitra Blogs",
       },
     ],
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Blogs | BeVichitra",
+    description:
+      "Actionable insights on branding, UI/UX, and digital growth.",
+    images: ["https://bevichitra.com/images/URLimages/blog.jpg"], // ✅ SAME IMAGE
   },
 };
 
@@ -30,11 +42,15 @@ const db = client.db("blogDB");
 const blogs = await db
 .collection("blogs")
 .find({})
-.sort({ publishedAt: -1 })
+.sort({ _id: -1 })
 .toArray();
 
 return blogs;
 }
+
+export const dynamic = "force-dynamic";
+
+export const revalidate = 0;
 
 export default async function BlogPage() {
 const blogs = await getBlogs();

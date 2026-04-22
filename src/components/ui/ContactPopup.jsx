@@ -5,67 +5,73 @@ import { AnimatePresence, motion } from "framer-motion";
 import ContactFlow from "@/components/section/contact/ContactFlow";
 
 export default function ContactPopup({ open, setOpen }) {
-const [step, setStep] = useState(1);
+  const [step, setStep] = useState(1);
 
-/* RESET STEP ON OPEN */
-useEffect(() => {
-if (open) {
-setStep(1);
-}
-}, [open]);
+  /* RESET STEP ON OPEN */
+  useEffect(() => {
+    if (open) {
+      setStep(1);
+    }
+  }, [open]);
 
-useEffect(() => {
-  if (open) {
-    // store scroll position
-    const scrollY = window.scrollY;
+  useEffect(() => {
+    if (open) {
+      const scrollY = window.scrollY;
 
-    document.body.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
 
-    return () => {
-      document.body.style.overflow = "";
-      window.scrollTo(0, scrollY);
-    };
-  }
-}, [open]);
+      return () => {
+        document.body.style.overflow = "";
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [open]);
 
-return (
-<AnimatePresence>
-{open && (
-<>
-{/* BACKDROP */}
-<motion.div
-onClick={() => setOpen(false)}
-className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[999]"
-initial={{ opacity: 0 }}
-animate={{ opacity: 1 }}
-exit={{ opacity: 0 }}
-/>
-
-      {/* MODAL */}
-      <motion.div
-        className="fixed inset-0 flex items-center justify-center z-[1000] px-4"
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
-      >
-        <div className="relative w-full max-w-xl">
-          {/* CLOSE BUTTON */}
-          <button
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          {/* BACKDROP */}
+          <div
             onClick={() => setOpen(false)}
-            className="absolute -top-3 -right-3 w-9 h-9 rounded-full border border-[var(--border)] bg-[var(--bg-main)] flex items-center justify-center text-sm hover:bg-[var(--bg-elevated)] transition z-10"
+            className="fixed inset-0 z-[999]"
           >
-            ✕
-          </button>
+            {/* 🔹 BLUR LAYER (NOT ANIMATED) */}
+            <div
+              className="absolute inset-0 backdrop-blur-sm"
+              style={{ willChange: "backdrop-filter" }}
+            />
 
-          <ContactFlow
-            step={step}
-            setStep={setStep}
-          />
-        </div>
-      </motion.div>
-    </>
-  )}
-</AnimatePresence>
+            {/* 🔹 DARK OVERLAY (ANIMATED) */}
+            <motion.div
+              className="absolute inset-0 bg-black/40"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+          </div>
 
-);
+          {/* MODAL */}
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center z-[1000] px-4"
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+          >
+            <div className="relative w-full max-w-xl">
+              {/* CLOSE BUTTON */}
+              <button
+                onClick={() => setOpen(false)}
+                className="absolute -top-3 -right-3 w-9 h-9 rounded-full border border-[var(--border)] bg-[var(--bg-main)] flex items-center justify-center text-sm hover:bg-[var(--bg-elevated)] transition z-10"
+              >
+                ✕
+              </button>
+
+              <ContactFlow step={step} setStep={setStep} />
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
 }
