@@ -28,16 +28,25 @@ const fredokaRegular = localFont({
 });
 
 export const metadata = {
-  metadataBase: new URL("https://bevichitra.com"),
+  title: "Bevichitra | Creative Digital Agency",
+  description: "We help brands grow with design, development and strategy.",
 
-  openGraph: {
-    siteName: "BeVichitra",
-    locale: "en_US",
-    type: "website",
+  verification: {
+    google: "b79YhXEm8RwMUNLZMWRQBK_0ukq8jzNjVqfxOjkiKlU",
   },
 
-  twitter: {
-    card: "summary_large_image",
+  openGraph: {
+    title: "Bevichitra",
+    description: "Creative digital agency",
+    url: "https://bevichitra.com",
+    siteName: "Bevichitra",
+    images: [
+      {
+        url: "https://bevichitra.com/images/URLimages/LogoIcon.jpg",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
 };
 
